@@ -4,6 +4,8 @@
  * le carnet de commandes, puis la vue choisie. Elle délègue à renderWeek() (vue-semaine.js)
  * et à renderAtelier() (vue-atelier.js). Il suffit de l'appeler après toute modification.
  * geo garde l'échelle affichée (début, nombre de jours, largeur d'un jour) pour le glisser-déposer.
+ * Chaque barre affiche sa marge (orange si 2 j ou moins, rouge si retard) et une poignée .rz
+ * sur son bord droit pour changer la durée à la souris (voir glisser-deposer.js).
  */
 
 let geo = null;
@@ -77,16 +79,18 @@ function render() {
       if (s.livraison && i.livr) { const li = idx(i.livr); if (li >= 0 && li < days) lane += `<div class="livr${i.retard ? "" : " ok"}" style="left:${(li + 1) * dayW}px" title="Livraison ${esc(s.numero)} : ${ddy(i.livr)}"></div>`; }
       if (ei < 0 || si >= days) continue;
       const a = Math.max(si, 0), b = Math.min(ei + 1, days);
-      const cls = (i.fin < t0 ? " past" : i.debut <= t0 ? " now" : "") + (i.retard ? " late" : "") + (clash.has(s.id) ? " clash" : "");
+      const cls = (i.fin < t0 ? " past" : i.debut <= t0 ? " now" : "") + (margeCls(i) ? " " + margeCls(i) : "") + (clash.has(s.id) ? " clash" : "");
       let ticks = "";
       if (S.view === "4s") {
         let k = 0, every = dayW >= 30 ? 1 : 5;
         for (let d = new Date(i.debut); d <= i.fin; d = add(d, 1)) { if (!isWork(d)) continue; k++; const di = idx(d); if (di >= a && di < b && (k === 1 || k % every === 0 || k === dur(s))) ticks += `<i style="left:${(di - a + .5) * dayW}px">J${k}</i>`; }
       }
-      const warn = clash.has(s.id) ? "Chevauchement" : i.retard ? `Retard ${i.retard} j` : "";
-      lane += `<div class="sbar${cls}${ticks ? " has-ticks" : ""}" data-id="${esc(s.id)}" tabindex="0" style="left:${a * dayW + 1}px;width:${(b - a) * dayW - 2}px" title="${esc(s.numero)}${s.couleur ? " · shelter " + esc(s.couleur) : ""} · entrée ${ddy(i.debut)} · sortie ${ddy(i.fin)}${s.livraison ? " · livraison " + ddy(i.livr) : ""} · élec ${esc(s.elec || "à affecter")}${s.etapeElec ? " (" + esc(s.etapeElec) + ")" : ""} · méca ${esc(s.meca || "à affecter")}${s.etapeMeca ? " (" + esc(s.etapeMeca) + ")" : ""}">
+      // Le chevauchement et le retard s'affichent tous les deux ; la marge s'affiche quand il n'y a pas de retard
+      const warn = [clash.has(s.id) && "Chevauchement", i.retard && `Retard ${i.retard} j`].filter(Boolean).join(" · ");
+      const mg = i.marge !== null && !i.retard ? ` · <span class="mg${margeCls(i) ? " " + margeCls(i) : ""}">${margeTxt(i)}</span>` : "";
+      lane += `<div class="sbar${cls}${ticks ? " has-ticks" : ""}" data-id="${esc(s.id)}" tabindex="0" style="left:${a * dayW + 1}px;width:${(b - a) * dayW - 2}px" title="${esc(s.numero)}${s.couleur ? " · shelter " + esc(s.couleur) : ""} · entrée ${ddy(i.debut)} · sortie ${ddy(i.fin)}${s.livraison ? " · livraison " + ddy(i.livr) + " · " + margeTxt(i) : ""} · élec ${esc(s.elec || "à affecter")}${s.etapeElec ? " (" + esc(s.etapeElec) + ")" : ""} · méca ${esc(s.meca || "à affecter")}${s.etapeMeca ? " (" + esc(s.etapeMeca) + ")" : ""}">
         <span class="bn">${sw(s.couleur)}${esc(s.numero)}${s.client ? ` <span class="bc">${esc(s.client)}</span>` : ""}</span>
-        <span class="bc">${dd(i.debut)} → ${dd(i.fin)} · <span class="act">É</span> ${who(s.elec, s.etapeElec)} · <span class="act">M</span> ${who(s.meca, s.etapeMeca)}${warn ? ` <span class="bw">${warn}</span>` : ""}</span>${ticks ? `<span class="ticks">${ticks}</span>` : ""}</div>`;
+        <span class="bc">${dd(i.debut)} → ${dd(i.fin)}${mg} · <span class="act">É</span> ${who(s.elec, s.etapeElec)} · <span class="act">M</span> ${who(s.meca, s.etapeMeca)}${warn ? ` <span class="bw">${warn}</span>` : ""}</span>${ticks ? `<span class="ticks">${ticks}</span>` : ""}${ei < days ? `<i class="rz" title="Étirer pour changer la durée"></i>` : ""}</div>`;
     }
     rows += `<div class="grow"><div class="glabel"><b>${esc(S.cfg.noms[r - 1] || "Emplacement " + r)}</b><span>${busy ? esc(busy.numero) + " en cours" : "Libre aujourd'hui"}</span></div>
       <div class="glane" data-row="${r}" style="width:${W}px;background:${weBg}">${lane}</div></div>`;

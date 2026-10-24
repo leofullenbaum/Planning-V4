@@ -50,18 +50,19 @@ Les fichiers sont des scripts classiques qui partagent les mêmes variables glob
 | --- | --- | --- |
 | `connexion-serveur.js` | Fournit l'objet `db` qui parle à `server.js`. | changer de stockage |
 | `outils.js` | Raccourcis (`$`, `esc`), couleurs RAL, état `S`, réglages par défaut `DEF`. | comprendre l'état |
-| `calendrier.js` | Dates, jours ouvrés, date de fin et retard d'une station (`info`). | jours fériés, calcul des dates |
+| `calendrier.js` | Dates, jours ouvrés, date de fin, marge et retard d'une station (`info`, `marge`). | jours fériés, calcul des dates |
+| `presence.js` | Jours de présence des personnes (`presence`, `toggleAbsence`). | congés, temps partiel |
 | `exemple.js` | Données de démonstration si le serveur ne répond pas. | |
 | `enregistrement.js` | `patchS`, `createS`, `deleteS`, `saveCfg` : toutes les écritures. | ajouter un champ |
-| `placement-auto.js` | Bouton « Placer automatiquement ». | règles de placement |
+| `placement-auto.js` | Bouton « Placer automatiquement » et décalage en cascade (`cascade`). | règles de placement |
 | `vue-planning.js` | `render()` et les vues 4 semaines / 3 mois. | point d'entrée de l'affichage |
 | `gamme.js` | Ordre des étapes, étape du jour (`stepOf`), heures par étape. | gammes méca / élec |
 | `charge-alertes.js` | Charge par personne et alertes du bandeau (`alerts`, `ALERT_DEF`). | ajouter une alerte |
 | `vue-atelier.js` | Écran atelier vu de dessus. | affichage TV |
-| `glisser-deposer.js` | Déplacer une station ou une commande du carnet. | glisser-déposer des barres |
+| `glisser-deposer.js` | Déplacer une station ou une commande du carnet, étirer une barre. | glisser-déposer des barres |
 | `fiches.js` | Fiche d'une station, nouvelle commande, `toast()`. | formulaire station |
 | `reglages.js` | Fenêtre Réglages et lecture des gammes saisies. | réglages |
-| `vue-semaine.js` | Vue Semaine, interversion des étapes, fiche d'un jour. | vue par défaut |
+| `vue-semaine.js` | Vue Semaine, interversion des étapes, fiche d'un jour, tableau de présence. | vue par défaut |
 | `demarrage.js` | Boutons de la barre, mode planning / atelier, chargement des données. | |
 
 Chaque fichier commence par un commentaire qui résume ce qu'il contient et le sens des noms courts.
@@ -82,13 +83,15 @@ Le code utilise quelques noms très courts, partout :
 | `esc(t)` | Protège un texte avant de l'insérer dans la page |
 | `P(ds)` / `iso(d)` | Texte → date / date → texte |
 | `dd(d)` / `ddy(d)` | Date affichée `02/11` / `02/11/26` |
-| `info(s)` | `{ debut, fin, livr, retard }` d'une station |
+| `info(s)` | `{ debut, fin, livr, retard, marge }` d'une station |
 
 ## Règles de calcul
 
 - Une station reste `duree` jours travaillés (17 par défaut) sur son emplacement, à partir de `debut`. Une entrée saisie un samedi ou un dimanche est calée au lundi.
 - Jours travaillés : du lundi au vendredi si « Jours ouvrés seulement » est coché. Les jours fériés ne sont pas encore gérés.
-- Retard : nombre de jours calendaires entre la livraison et la sortie, si la sortie est après la livraison. Marge : nombre de jours ouvrés entre la sortie et la livraison (alerte orange à 2 jours ou moins).
+- Marge : nombre de jours ouvrés entre la sortie et la livraison (orange à 2 jours ou moins). Retard : la même chose quand la sortie est après la livraison, aussi en jours ouvrés.
+- Cascade : quand une station est déplacée, étirée ou change de date, les stations qui la suivent sur le même emplacement et qui la chevaucheraient sont poussées au jour travaillé suivant sa sortie, de proche en proche. Un chevauchement déjà présent avant l'action n'est pas corrigé, il reste signalé.
+- Présence : une personne affectée à une station un jour où elle est en repos ou absente déclenche l'alerte « prévue un jour d'absence ». La présence ne change pas la durée des stations.
 - Gamme : les étapes s'enchaînent dans l'ordre, 7 h par jour (`H_JOUR`). L'étape affichée un jour donné est, par priorité : l'étape saisie pour ce jour, l'étape fixée pour la station, puis l'étape calculée par la gamme.
 
 ## Version claude.ai

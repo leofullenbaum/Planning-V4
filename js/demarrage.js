@@ -45,7 +45,7 @@ setMode(location.hash === "#atelier" ? "atelier" : "planning");
     gs = gs || !snap.metadata.fromCache || snap.size > 0; S.ready = gs && gc; render();
   }, fail);
   db.doc("reglages/general").onSnapshot((d) => {
-    if (d.exists) { const c = d.data(); S.cfg = { ...DEF, ...c, elecs: c.elecs || [], mecas: c.mecas || [], etapesElec: c.etapesElec || [], etapesMeca: c.etapesMeca || [], heuresElec: c.heuresElec || [], heuresMeca: c.heuresMeca || [], noms: Array.from({ length: NB_EMPL }, (_, i) => (c.noms || [])[i] || DEF.noms[i]) }; }
+    if (d.exists) { const c = d.data(); S.cfg = { ...DEF, ...c, elecs: c.elecs || [], mecas: c.mecas || [], etapesElec: c.etapesElec || [], etapesMeca: c.etapesMeca || [], heuresElec: c.heuresElec || [], heuresMeca: c.heuresMeca || [], presence: c.presence || {}, noms: Array.from({ length: NB_EMPL }, (_, i) => (c.noms || [])[i] || DEF.noms[i]) }; }
     gc = true; S.ready = gs && gc; render();
   }, fail);
 })();

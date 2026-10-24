@@ -19,7 +19,7 @@ const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const RO_MSG = "Vous pouvez consulter ce planning mais pas le modifier.";
 const NB_EMPL = 5, LW = 128;
-const DEF = { duree: 17, ouvres: true, noms: ["Emplacement 1", "Emplacement 2", "Emplacement 3", "Emplacement 4", "Emplacement 5"], elecs: [], mecas: [], etapesElec: [], etapesMeca: [], heuresElec: [], heuresMeca: [] };
+const DEF = { duree: 17, ouvres: true, noms: ["Emplacement 1", "Emplacement 2", "Emplacement 3", "Emplacement 4", "Emplacement 5"], elecs: [], mecas: [], etapesElec: [], etapesMeca: [], heuresElec: [], heuresMeca: [], presence: {} };
 /* Teintes RAL courantes (approximation écran) */
 const RAL = { "1001": "#c2b078", "1015": "#e6d2b5", "3020": "#c1121c", "5010": "#004f7c", "5015": "#2874b2", "6003": "#50533c", "6011": "#6c7c59", "6014": "#47402e", "7016": "#383e42", "7032": "#b8b799", "7035": "#cbd0cc", "7040": "#9da3a6", "8017": "#45322e", "9001": "#e9e0d2", "9005": "#0a0a0a", "9010": "#f1ece1", "9016": "#f1f0ea" };
 const RAL_NOMS = { "1001": "beige", "1015": "ivoire clair", "3020": "rouge signalisation", "5010": "bleu gentiane", "5015": "bleu ciel", "6003": "vert olive", "6011": "vert réséda", "6014": "olive jaune", "7016": "gris anthracite", "7032": "gris silex", "7035": "gris clair", "7040": "gris fenêtre", "8017": "brun chocolat", "9001": "blanc crème", "9005": "noir foncé", "9010": "blanc pur", "9016": "blanc signalisation" };

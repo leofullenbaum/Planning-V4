@@ -6,6 +6,9 @@
  *  - glisser une étape sur une autre de la même station change son ordre de montage
  *    (champ ordreMeca / ordreElec de la station), et toute la suite se décale
  *  - openDay() : fiche d'un jour (étape du jour, étape de la station, ordre standard)
+ *  - presTable() : tableau « Présence de l'équipe » sous le planning ; un clic sur un jour
+ *    ajoute ou retire une absence (presence.js). Une case est aussi rouge si la personne
+ *    affectée est absente ou en repos ce jour-là.
  */
 
 // Étapes d'une personne sur une station un jour donné : [{ n, h, j }] ; null si la station n'est pas dans l'atelier ce jour-là
@@ -31,7 +34,7 @@ function renderWeek(t0) {
   for (let r = 1; r <= NB_EMPL; r++) {
     const list = pl.filter(s => Number(s.emplacement) === r).map(s => ({ s, i: info(s) })).filter(x => x.i.debut <= end && x.i.fin >= days[0]).sort((a, b) => a.i.debut - b.i.debut);
     const multi = list.length > 1;
-    let head = list.map(({ s, i }) => `<span class="st">${sw(s.couleur)}<b>${esc(s.numero)}</b>${s.client ? ` ${esc(s.client)}` : ""}<span class="gi">entrée ${dd(i.debut)} · sortie ${dd(i.fin)}${i.livr ? ` · livraison ${dd(i.livr)}` : ""}</span>${i.retard ? `<b class="bad">retard ${i.retard} j</b>` : ""}</span>`).join("");
+    let head = list.map(({ s, i }) => `<span class="st">${sw(s.couleur)}<b>${esc(s.numero)}</b>${s.client ? ` ${esc(s.client)}` : ""}<span class="gi">entrée ${dd(i.debut)} · sortie ${dd(i.fin)}${i.livr ? ` · livraison ${dd(i.livr)}` : ""}</span>${i.marge !== null ? `<b class="mg${margeCls(i) ? " " + margeCls(i) : ""}">${margeTxt(i)}</b>` : ""}</span>`).join("");
     if (!list.length) { const nx = pl.filter(s => Number(s.emplacement) === r).map(s => ({ s, i: info(s) })).filter(x => x.i.debut > end).sort((a, b) => a.i.debut - b.i.debut)[0]; head = `<span class="gi">Libre cette semaine${nx ? ` · prochaine : ${esc(nx.s.numero)} le ${dd(nx.i.debut)}` : ""}</span>`; }
     h += `<tbody class="em"><tr class="grp"><th colspan="${days.length + 1}"><span class="a-no sm">${r}</span>${head}</th></tr>`;
     for (const [role, lab] of [["meca", "Méca"], ["elec", "Élec"]]) {
@@ -44,6 +47,7 @@ function renderWeek(t0) {
         for (const x of here) {
           const p = x.s[role], tasks = p ? ((chw.get(p) || {})[ds] || []) : [];
           if (x.parts.length && tasks.length > 1) over.push(`${esc(p)} aussi sur ${tasks.filter(t => t.s.id !== x.s.id).map(t => esc(t.s.numero)).join(", ")}`);
+          if (p && presence(p, d) !== "present") over.push(`${esc(p)} : ${PRES_TXT[presence(p, d)].toLowerCase()} ce jour`);
           cell += `<div class="dc" data-id="${esc(x.s.id)}" data-role="${role}" data-date="${ds}">${multi ? `<span class="tag">${esc(x.s.numero)}</span>` : ""}<span class="jj">J${workCount(x.i.debut, d)}</span>`
             + (x.parts.length ? x.parts.map(q => `<div class="si${q.own ? " own" : ""}${q.own || q.fixed ? " lock" : ""}" ${q.j !== undefined ? `data-j="${q.j}"` : ""} title="${q.own ? "Étape choisie pour ce jour" : q.fixed ? "Étape fixée pour la station" : "Glisser sur une autre étape pour changer l'ordre"}">${q.j !== undefined ? `<i class="gp">⋮⋮</i>` : ""}<span class="nm">${esc(q.n)}</span>${q.h ? `<span class="hh">${fmtHr(q.h)}</span>` : ""}</div>`).join("")
               : `<div class="si none">${gamme(x.s, role) ? "Gamme terminée" : "Étape à définir"}</div>`) + `</div>`;
@@ -55,12 +59,37 @@ function renderWeek(t0) {
     }
     h += `</tbody>`;
   }
-  h += `</table>`;
+  h += `</table>` + presTable(days, chw, t0);
   $("gt").style.cssText = ""; $("gt").innerHTML = h;
-  $("regle").textContent = `· Cliquez sur un jour pour changer son étape. Glissez une étape sur une autre pour changer l'ordre de montage de la station : la suite se décale.${clashes ? ` ${clashes} case${clashes > 1 ? "s" : ""} en rouge : la personne a une autre tâche le même jour.` : ""}`;
+  $("regle").textContent = `· Cliquez sur un jour pour changer son étape. Glissez une étape sur une autre pour changer l'ordre de montage de la station : la suite se décale.${clashes ? ` ${clashes} case${clashes > 1 ? "s" : ""} en rouge : la personne a une autre tâche ou n'est pas là ce jour-là.` : ""} Cliquez sur un jour du tableau de présence pour saisir ou retirer une absence.`;
 }
-// Clic sur un jour : fiche du jour
-$("gt").addEventListener("click", (e) => { if (sdragDone) { sdragDone = false; return; } const c = e.target.closest(".wk.fix .dc"); if (c) openDay(c.dataset.id, c.dataset.role, c.dataset.date); });
+// Présence de l'équipe : une ligne par personne, méca puis élec
+function presTable(days, chw, t0) {
+  const people = [...staff()].filter(([p]) => (S.cfg.mecas || []).includes(p) || (S.cfg.elecs || []).includes(p)).sort((a, b) => a[1] === b[1] ? 0 : a[1] === "meca" ? -1 : 1);
+  if (!people.length) return "";
+  let h = `<table class="wk pres"><thead><tr><th class="who">Présence de l'équipe</th>${days.map(d => `<th class="${+d === +t0 ? "td" : ""}">${esc(d.toLocaleDateString("fr-FR", { weekday: "long" }))} <span>${dd(d)}</span></th>`).join("")}</tr></thead><tbody>`;
+  for (const [p, role] of people) {
+    h += `<tr><th class="who"><span class="rl">${role === "elec" ? "Élec" : "Méca"}</span><span class="pn">${esc(p)}</span></th>`;
+    for (const d of days) {
+      const ds = iso(d), st = presence(p, d), tasks = (chw.get(p) || {})[ds] || [];
+      const nums = [...new Set(tasks.map(t => t.s.numero))];
+      h += `<td class="pc ${st}${+d === +t0 ? " td" : ""}${st !== "present" && nums.length ? " clash" : ""}" data-p="${esc(p)}" data-date="${ds}" title="${st === "repos" ? "Jour non travaillé (Réglages)" : "Cliquer pour " + (st === "absent" ? "retirer l'absence" : "saisir une absence")}">`
+        + `<span class="ps">${PRES_TXT[st]}</span>${nums.length ? nums.map(n => `<span class="tag">${esc(n)}</span>`).join(" ") : st === "present" ? `<span class="none">Sans tâche</span>` : ""}</td>`;
+    }
+    h += `</tr>`;
+  }
+  return h + `</tbody></table>`;
+}
+// Clic sur un jour : fiche du jour ; clic dans le tableau de présence : absence ce jour-là
+$("gt").addEventListener("click", (e) => {
+  if (sdragDone) { sdragDone = false; return; }
+  const c = e.target.closest(".wk.fix .dc"); if (c) return openDay(c.dataset.id, c.dataset.role, c.dataset.date);
+  const pc = e.target.closest(".wk.pres td.pc"); if (!pc || guard()) return;
+  const p = pc.dataset.p, d = P(pc.dataset.date);
+  if (presence(p, d) === "repos") return toast(`${p} ne travaille pas le ${d.toLocaleDateString("fr-FR", { weekday: "long" })} : changez ses jours dans Réglages.`);
+  const was = presence(p, d); toggleAbsence(p, pc.dataset.date); render();
+  toast(was === "absent" ? `${p} : absence du ${dd(d)} retirée.` : `${p} : absence enregistrée le ${dd(d)}.`);
+});
 // Glisser une étape sur une autre : change l'ordre de montage de la station
 let sdrag = null, sdragDone = false;
 document.addEventListener("pointerdown", (e) => {

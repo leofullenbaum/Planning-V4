@@ -43,3 +43,10 @@
 .sbar .stp { font-weight: 600; color: var(--ink); }
 .glabel b { font-size: 15px; }
 .gfoot.nolg > span:not(#regle) { display: none; }
+.sbar.tight { border-color: #d98a1a; box-shadow: inset 0 0 0 1px #d98a1a; }
+.sbar .mg { font-weight: 700; color: var(--st-done); }
+.sbar .mg:not(.tight):not(.late) { color: #2f7d4f; }
+.sbar .mg.tight { color: #b86e0a; }
+.sbar .rz { position: absolute; top: 0; right: 0; bottom: 0; width: 9px; cursor: ew-resize; z-index: 2; border-radius: 0 6px 6px 0; }
+.sbar .rz:hover, .sbar.resizing .rz { background: color-mix(in srgb, var(--accent) 45%, transparent); }
+.sbar.resizing { z-index: 20; box-shadow: 0 6px 18px rgba(0,0,0,.2); }
