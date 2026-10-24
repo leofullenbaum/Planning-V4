@@ -1,0 +1,13 @@
+/* Carnet de commandes : colonne de gauche des vues 4 semaines et 3 mois.
+ */
+
+.carnet { background: var(--surface-2); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+#carnet { display: flex; flex-direction: column; gap: 6px; min-height: 90px; border-radius: 6px; padding: 2px; }
+.oc { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; cursor: grab; touch-action: none; user-select: none; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 2px; }
+.oc .t { display: flex; justify-content: space-between; gap: 6px; font-weight: 600; }
+.oc .t span { font-family: var(--f-mono); font-size: 12px; font-weight: 500; color: var(--muted); }
+.oc .m { font-size: 12px; color: var(--muted); }
+.oc .m b { color: var(--ink); font-weight: 600; }
+.oc.late .m b { color: var(--st-block); }
+.drop-hover { background: var(--drop); outline: 2px dashed var(--st-run); outline-offset: -2px; }
+.oc .t .nm { display: inline-flex; align-items: center; font-family: var(--f-body); font-size: 14px; font-weight: 600; color: var(--ink); }

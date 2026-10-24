@@ -1,0 +1,40 @@
+/* Écran atelier (TV, adresse /#atelier) : toujours en thème clair, gros caractères, plan vu de dessus.
+ */
+
+.atelier { --a-bg: #ffffff; --a-panel: #f3f6f5; --a-panel-2: #e6eeeb; --a-ink: #3f3e3f; --a-muted: #6c6e71; --a-line: #dbe3e0; --a-accent: #009881;
+  --a-todo: #8a8d90; --a-run: #009881; --a-done: #9aa59f; --a-block: #d03b3b;
+  position: fixed; inset: 0; z-index: 30; background: var(--a-bg); color: var(--a-ink); overflow: auto; color-scheme: light;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 20px calc(16px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 16px; }
+.a-head { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 24px; border-bottom: 3px solid var(--a-accent); padding-bottom: 10px; }
+.a-clock { font-family: var(--f-display); font-weight: 700; font-size: clamp(44px, 6vw, 84px); line-height: .9; font-variant-numeric: tabular-nums; }
+.a-date { font-family: var(--f-display); font-weight: 600; font-size: clamp(22px, 2.6vw, 36px); text-transform: capitalize; }
+.a-date small { display: block; font-family: var(--f-mono); font-size: 14px; color: var(--a-muted); text-transform: none; }
+.a-tools { margin-left: auto; display: flex; gap: 8px; opacity: .55; transition: opacity .2s; }
+.a-tools:hover, .a-tools:focus-within { opacity: 1; }
+.a-tools .btn { background: var(--a-panel-2); border-color: var(--a-line); color: var(--a-ink); }
+.a-foot { margin-top: auto; font-size: 13px; color: var(--a-muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.a-plan .sn, .a-plan .numt, .a-plan .lib { font-family: var(--f-body); }
+.a-plan .sn { font-size: 34px; }
+.a-head { border-bottom-width: 3px; }
+.a-clock, .a-date { font-family: var(--f-body); }
+.a-plan { flex: 1; min-height: 0; display: flex; justify-content: center; }
+.a-plan svg { display: block; width: 100%; height: auto; max-height: calc(100vh - 150px); }
+.a-plan text { font-family: var(--f-body); fill: var(--a-ink); }
+.a-plan .door { stroke: #a9b9b3; stroke-width: 3; fill: none; }
+.a-plan .bay { fill: #ffffff; stroke: #a9b9b3; stroke-width: 4; stroke-dasharray: 14 9; }
+.a-plan .shel { stroke: #3f3e3f; stroke-width: 4; }
+.a-plan .late .shel { stroke: var(--a-block); stroke-width: 9; }
+.a-plan .panel { fill: rgba(255,255,255,.95); }
+.a-plan .num { fill: #ffffff; stroke: var(--a-ink); stroke-width: 3; }
+.a-plan .numt { font: 700 32px var(--f-display); fill: var(--a-ink); text-anchor: middle; dominant-baseline: middle; }
+.a-plan .sn { font: 700 40px var(--f-display); dominant-baseline: middle; }
+.a-plan .jr { font: 600 46px var(--f-mono); fill: var(--a-accent); }
+.a-plan .jn { font-size: 28px; fill: var(--a-muted); }
+.a-plan .pg0 { fill: var(--a-line); }
+.a-plan .pg1 { fill: var(--a-accent); }
+.a-plan .lbl { font-size: 16px; font-weight: 700; fill: var(--a-muted); letter-spacing: .06em; }
+.a-plan .who { font-size: 24px; font-weight: 700; }
+.a-plan .stp { font-size: 21px; font-weight: 600; fill: #00735f; }
+.a-plan .sm { font-size: 19px; fill: var(--a-muted); text-anchor: middle; }
+.a-plan .miss { fill: var(--a-block); }
+.a-plan .lib { font: 700 52px var(--f-display); fill: #a9b9b3; text-anchor: middle; }

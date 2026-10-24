@@ -8,17 +8,25 @@ L'application tourne sur un PC de l'entreprise. Tous les postes du même réseau
 
 | Chemin | Rôle |
 | --- | --- |
-| `index.html` | L'application (planning, vue semaine, alertes, écran atelier) |
+| `index.html` | Structure de la page de l'application |
+| `css/` | Styles : thème, vues, fiches, écran atelier |
+| `js/` | Code : calendrier, gammes, alertes, vues, glisser-déposer |
 | `server.js` | Serveur local Node.js, sans dépendance |
 | `lancer.bat` | Lancement en double-clic sous Windows |
 | `data/data.json` | Données du planning (stations et réglages) |
 | `data/donnees-test.json` | Jeu de test : 14 stations, une par scénario |
+| `docs/architecture.md` | Comment l'application est construite, rôle de chaque fichier |
+| `docs/donnees.md` | Format de `data.json`, champ par champ |
+| `docs/ajouter-une-fonctionnalite.md` | Tester, modifier, livrer ; où intervenir selon le besoin |
 | `docs/plan-realisation.md` | Plan de réalisation : 6 phases, données d'entrée, cas de test |
+| `CHANGELOG.md` | Ce qui a changé, version par version |
+
+**Pour reprendre le projet après une pause :** lire `CHANGELOG.md` (où on en est), puis `docs/architecture.md` (comment c'est fait), puis les [issues ouvertes](https://github.com/leofullenbaum/Planning-V4/issues) (ce qui reste à faire).
 
 ## 1. Installer (une seule fois, sur le PC qui servira de serveur)
 
 - Installer Node.js (version LTS) : https://nodejs.org
-- Copier ce dossier sur le PC, par exemple dans `C:\PlanningAtelier` (bouton **Code > Download ZIP** sur GitHub, ou zip d'une release).
+- Copier ce dossier (avec `css/`, `js/` et `data/`) sur le PC, par exemple dans `C:\PlanningAtelier` (bouton **Code > Download ZIP** sur GitHub, ou zip d'une release).
 
 ## 2. Lancer
 

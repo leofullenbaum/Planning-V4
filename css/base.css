@@ -1,0 +1,73 @@
+/* Base : couleurs (thème clair et sombre), polices, boutons, barre d'outils, puces d'alerte.
+ * Les couleurs se changent uniquement dans les variables --... ci-dessous (vert Gazfio : --accent).
+ */
+
+:root {
+  --bg: #f5f7f6; --surface: #ffffff; --surface-2: #eef3f1; --ink: #3f3e3f; --muted: #6c6e71; --line: #dde4e1;
+  --accent: #009881; --accent-soft: #dff2ee; --accent-ink: #ffffff;
+  --st-todo: #8a8d90; --st-run: #5e8e86; --st-done: #b1b5b7; --st-block: #cc3d3d;
+  --drop: #dff2ee; --shadow: 0 1px 2px rgba(63,62,63,.06), 0 2px 8px rgba(63,62,63,.06);
+  --f-display: "Roboto", "Segoe UI", Arial, sans-serif;
+  --f-body: "Roboto", "Segoe UI", Arial, sans-serif;
+  --f-mono: "Roboto Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121615; --surface: #1a201e; --surface-2: #222a27; --ink: #e8ecea; --muted: #a3aaa7; --line: #303a36;
+  --accent: #1db89c; --accent-soft: #143a33; --accent-ink: #04140f;
+  --st-todo: #8f9794; --st-run: #7fb3aa; --st-done: #6b7471; --st-block: #ec6464;
+  --drop: #143a33; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 2px 8px rgba(0,0,0,.25); color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #121615; --surface: #1a201e; --surface-2: #222a27; --ink: #e8ecea; --muted: #a3aaa7; --line: #303a36;
+  --accent: #1db89c; --accent-soft: #143a33; --accent-ink: #04140f;
+  --st-todo: #8f9794; --st-run: #7fb3aa; --st-done: #6b7471; --st-block: #ec6464;
+  --drop: #143a33; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 2px 8px rgba(0,0,0,.25); color-scheme: dark }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 14px; }
+* { box-sizing: border-box; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.app { display: flex; flex-direction: column; min-height: 100%; padding-inline: 16px; padding-block: 12px 24px; gap: 12px; }
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.brand { display: flex; align-items: baseline; gap: 10px; margin-right: auto; }
+.brand h1 { font-family: var(--f-display); font-weight: 700; font-size: 26px; letter-spacing: .02em; text-transform: uppercase; margin: 0; }
+.weeknav { display: flex; align-items: center; gap: 4px; }
+.weeknav .lbl { min-width: 168px; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 7px 12px; cursor: pointer; font-weight: 500; white-space: nowrap; }
+.btn:hover { border-color: var(--muted); }
+.btn.icon { padding: 7px 10px; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.btn.danger { color: var(--st-block); }
+.btn.danger.armed { background: var(--st-block); border-color: var(--st-block); color: #fff; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.banner { border: 1px dashed var(--accent); background: var(--accent-soft); border-radius: 6px; padding: 8px 12px; font-size: 13px; }
+@media (max-width: 760px) { .board { grid-template-columns: minmax(0, 1fr); } }
+.zone-title { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--f-display); font-weight: 600; font-size: 17px; text-transform: uppercase; letter-spacing: .04em; }
+.zone-title small { font-family: var(--f-mono); font-size: 11px; color: var(--muted); letter-spacing: 0; }
+.hint { font-size: 12px; color: var(--muted); }
+.cell { padding: 6px; display: flex; flex-direction: column; gap: 6px; min-height: 104px; }
+[data-drop].hover { background: var(--drop); outline: 2px dashed var(--st-run); outline-offset: -2px; }
+.tag { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; background: var(--accent); color: var(--accent-ink); border-radius: 3px; padding: 1px 5px; }
+.st { display: inline-flex; align-items: center; gap: 4px; }
+.st::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--st-todo); }
+.ghost { position: fixed; z-index: 50; pointer-events: none; transform: rotate(1.5deg); box-shadow: 0 10px 28px rgba(0,0,0,.25); cursor: grabbing; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+[hidden] { display: none !important; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.seg button { border: 0; background: var(--surface); padding: 7px 12px; cursor: pointer; font-weight: 500; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 12px; font-weight: 600; border-radius: 999px; padding: 4px 10px; background: var(--surface); border: 1px solid var(--line); }
+.chip.bad { background: color-mix(in srgb, var(--st-block) 14%, var(--surface)); border-color: var(--st-block); color: var(--st-block); }
+.chip.ok { color: var(--st-done); border-color: color-mix(in srgb, var(--st-done) 50%, var(--line)); }
+.swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent); margin-right: 5px; vertical-align: -1px; flex: none; }
+.swatch.unk { background: repeating-linear-gradient(45deg, transparent 0 3px, var(--line) 3px 6px); }
+.swatch.big { width: .7em; height: .7em; border-radius: 6px; border-color: rgba(0,0,0,.25); margin-right: 12px; vertical-align: 0; }
+.miss { color: #ffffff; background: var(--st-block); border-radius: 3px; padding: 0 3px; font-weight: 600; }
+.chip.warn { background: var(--accent-soft); border-color: var(--accent); }
+.brand h1 { white-space: nowrap; color: var(--ink); text-transform: none; font-weight: 700; font-size: 24px; letter-spacing: 0; position: relative; padding-bottom: 6px; }
+.brand h1::after { content: ""; position: absolute; left: 0; bottom: 0; width: 40px; height: 3px; background: var(--accent); }
+.zone-title { letter-spacing: .02em; font-size: 15px; font-weight: 700; }
+button.chip { cursor: pointer; font-family: inherit; }
+button.chip:hover { filter: brightness(.96); text-decoration: underline; }
+.chip.orange { background: color-mix(in srgb, #d98a1a 14%, var(--surface)); border-color: #d98a1a; color: #9a5d08; }
+.chip.warn { color: var(--ink); }
