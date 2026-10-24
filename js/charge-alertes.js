@@ -13,16 +13,12 @@
  *  - openAlerts(k) : liste détaillée affichée au clic sur une alerte
  */
 
-function busyOn(s, role, d) {
-  if (!s[role] || !placed(s) || !isWork(d)) return "";
-  const i = info(s); if (d < i.debut || d > i.fin) return "";
-  const st = stepOf(s, role, iso(d)); if (st) return st;
-  return gamme(s, role) ? "" : "Sur la station";
-}
+// Métier pourvu : des personnes sur la station, ou une personne sur chaque bloc de la gamme
+const staffed = (s, role) => ppl(s[role]).length > 0 || (blockSpans(s, role).length > 0 && blockSpans(s, role).every(b => b.p));
 const staff = () => {
   const set = new Map();
   (S.cfg.mecas || []).forEach(n => set.set(n, "meca")); (S.cfg.elecs || []).forEach(n => set.has(n) || set.set(n, "elec"));
-  for (const s of S.stations.values()) if (placed(s)) { if (s.meca && !set.has(s.meca)) set.set(s.meca, "meca"); if (s.elec && !set.has(s.elec)) set.set(s.elec, "elec"); }
+  for (const s of S.stations.values()) if (placed(s)) for (const role of ["meca", "elec"]) [...ppl(s[role]), ...blockSpans(s, role).map(b => b.p).filter(Boolean)].forEach(p => set.has(p) || set.set(p, role));
   return set;
 };
 // Charge : personne → jour (iso) → [{ s, role, step }]
@@ -31,9 +27,7 @@ function chargeMap(from, to) {
   for (const s of pl) {
     const i = info(s), a = i.debut > from ? i.debut : from, b = i.fin < to ? i.fin : to;
     for (let d = new Date(a); d <= b; d = add(d, 1)) for (const role of ["meca", "elec"]) {
-      const st = busyOn(s, role, d); if (!st) continue;
-      const p = s[role]; if (!map.has(p)) map.set(p, {});
-      ((map.get(p))[iso(d)] = (map.get(p))[iso(d)] || []).push({ s, role, step: st });
+      for (const [p, st] of workOn(s, role, d)) { if (!map.has(p)) map.set(p, {}); ((map.get(p))[iso(d)] = (map.get(p))[iso(d)] || []).push({ s, role, step: st }); }
     }
   }
   return map;
@@ -70,7 +64,7 @@ function alerts(t0) {
     const i = info(s); if (i.fin < t0) continue;
     const m = i.marge;
     if (i.retard) A.late.push({ s, i }); else if (m !== null && m <= MARGE_FAIBLE) A.tight.push({ s, i, m });
-    if (!s.elec || !s.meca) A.nores.push({ s, i });
+    if (!staffed(s, "elec") || !staffed(s, "meca")) A.nores.push({ s, i });
   }
   for (let r = 1; r <= NB_EMPL; r++) {
     const l = pl.filter(s => Number(s.emplacement) === r).map(s => ({ s, i: info(s) })).sort((a, b) => a.i.debut - b.i.debut);
@@ -101,7 +95,7 @@ function openAlerts(k) {
     late: (x) => `${lk(x.s, esc(x.s.client || ""))} sort le ${ddy(x.i.fin)}, livraison le ${ddy(x.i.livr)} : <b class="bad">${x.i.retard} j de retard</b>`,
     tight: (x) => `${lk(x.s, esc(x.s.client || ""))} sort le ${ddy(x.i.fin)}, livraison le ${ddy(x.i.livr)} : marge ${x.m} j`,
     clash: (x) => `${esc(emplName(x.r))} : ${lk(x.a.s)} (sortie ${dd(x.a.i.fin)}) et ${lk(x.b.s)} (entrée ${dd(x.b.i.debut)})`,
-    nores: (x) => `${lk(x.s)} : ${[!x.s.meca && "méca", !x.s.elec && "élec"].filter(Boolean).join(" et ")} à affecter`,
+    nores: (x) => `${lk(x.s)} : ${[!staffed(x.s, "meca") && "méca", !staffed(x.s, "elec") && "élec"].filter(Boolean).join(" et ")} à affecter`,
     idle: (x) => `<b>${esc(x.p)}</b> (${x.role === "elec" ? "élec" : "méca"}) : ${x.n} jour${x.n > 1 ? "s" : ""} sans tâche, ${x.rs.slice(0, 4).map(plage).join(", ")}${x.rs.length > 4 ? "…" : ""}`,
   };
   const help = { abs: "Sur 90 jours. Affectez une autre personne dans la fiche de la station, ou changez la présence dans la vue Semaine ou les Réglages.", over: "Changez la personne dans la fiche de la station, ou décalez l'une des stations.", idle: "Sur les 4 prochaines semaines. Affectez cette personne à une station, ou avancez une station.", late: "Avancez la station dans la vue 4 semaines ou réduisez sa durée.", tight: "Ces stations sortent à 2 jours ouvrés ou moins de leur livraison.", clash: "Deux stations occupent le même emplacement en même temps.", nores: "Ouvrez la fiche pour choisir la personne." };

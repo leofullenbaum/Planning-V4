@@ -62,7 +62,8 @@ Les fichiers sont des scripts classiques qui partagent les mêmes variables glob
 | `glisser-deposer.js` | Déplacer une station ou une commande du carnet, étirer une barre. | glisser-déposer des barres |
 | `fiches.js` | Fiche d'une station, nouvelle commande, `toast()`. | formulaire station |
 | `reglages.js` | Fenêtre Réglages et lecture des gammes saisies. | réglages |
-| `vue-semaine.js` | Vue Semaine, interversion des étapes, fiche d'un jour, tableau de présence. | vue par défaut |
+| `vue-semaine.js` | Vue Semaine, bandeau Équipe, interversion des étapes, fiche d'un jour, tableau de présence. | vue par défaut |
+| `blocs.js` | Fiches des blocs : personne par bloc (liste des disponibles), clôture, avancement. | `openBloc`, `openBlocs` |
 | `demarrage.js` | Boutons de la barre, mode planning / atelier, chargement des données. | |
 
 Chaque fichier commence par un commentaire qui résume ce qu'il contient et le sens des noms courts.
