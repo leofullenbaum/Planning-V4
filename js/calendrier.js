@@ -10,7 +10,9 @@
  *  - endOf(debut, n) : dernier jour d'une station de n jours travaillés
  *  - latestStart(livr, n) : entrée au plus tard pour sortir avant la livraison
  *  - workCount(a, b) : nombre de jours travaillés de a à b inclus
- *  - info(s) : { debut, fin, livr, retard } calculés pour une station
+ *  - info(s) : { debut, fin, livr, retard, marge } calculés pour une station
+ *    retard et marge sont comptés en jours ouvrés (comme la durée d'une station)
+ *  - margeTxt(i) : « marge +8 j » / « retard 2 j » ; margeCls(i) : "late", "tight" ou ""
  *
  * Les jours fériés ne sont pas encore gérés (voir l'issue « Gérer les jours fériés »).
  */
@@ -35,6 +37,14 @@ const placed = (s) => s.emplacement && s.debut;
 const emplName = (r) => { const n = S.cfg.noms[r - 1] || String(r); return /^\d+$/.test(n) ? "Emplacement " + n : n; };
 function info(s) {
   const debut = snap(P(s.debut)), fin = endOf(debut, dur(s)), livr = s.livraison ? P(s.livraison) : null;
-  const retard = livr && fin > livr ? diff(livr, fin) : 0;
-  return { debut, fin, livr, retard };
+  const m = marge({ fin, livr }), retard = m !== null && m < 0 ? -m : 0;
+  return { debut, fin, livr, retard, marge: m };
 }
+// Marge en jours ouvrés entre la sortie et la livraison : positive si à l'heure, négative si en retard, null sans livraison
+function marge(i) {
+  if (!i.livr) return null;
+  return i.livr > i.fin ? workCount(add(i.fin, 1), i.livr) : -workCount(add(i.livr, 1), i.fin);
+}
+const MARGE_FAIBLE = 2;
+const margeCls = (i) => i.marge === null ? "" : i.marge < 0 ? "late" : i.marge <= MARGE_FAIBLE ? "tight" : "";
+const margeTxt = (i) => i.marge === null ? "" : i.marge < 0 ? `retard ${-i.marge} j` : `marge +${i.marge} j`;

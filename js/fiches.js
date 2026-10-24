@@ -40,7 +40,11 @@ function openEdit(id) {
   const calc = () => {
     const n = Number($("f-duree").value) || S.cfg.duree, l = $("f-livraison").value, b = $("f-debut").value;
     const parts = [];
-    if (b) { const f = endOf(P(b), n); parts.push(`Sortie prévue le ${f.toLocaleDateString("fr-FR")}`); if (l && f > P(l)) parts.push(`<b style="color:var(--st-block)">retard de ${diff(P(l), f)} j</b>`); }
+    if (b) {
+      const f = endOf(P(b), n), i = { fin: f, livr: l ? P(l) : null }; i.marge = marge(i);
+      parts.push(`Sortie prévue le ${f.toLocaleDateString("fr-FR")}`);
+      if (i.marge !== null) parts.push(`<b class="mg ${margeCls(i)}">${margeTxt(i)} (jours ouvrés)</b>`);
+    }
     if (l) parts.push(`entrée au plus tard le ${latestStart(P(l), n).toLocaleDateString("fr-FR")}`);
     $("calc").innerHTML = parts.join(" · ");
   };
@@ -63,9 +67,11 @@ function openEdit(id) {
     const v = (k) => $("f-" + k).value.trim(), ok = v("empl") && v("debut");
     const data = { numero: v("numero"), client: v("client"), couleur: v("couleur"), elec: v("elec"), meca: v("meca"), etapeElec: v("etapeElec"), etapeMeca: v("etapeMeca"), livraison: v("livraison"), duree: Number(v("duree")) || S.cfg.duree,
       emplacement: ok ? Number(v("empl")) : "", debut: ok ? iso(snap(P(v("debut")))) : "", note: v("note"), avancement: v("avancement") === "" ? "" : Math.max(0, Math.min(100, Number(v("avancement")) || 0)) };
-    if (id) { const patch = {}; for (const k in data) if (data[k] !== s[k]) patch[k] = data[k]; if (Object.keys(patch).length) patchS(id, patch); }
+    let moved = [];
+    if (id) { const patch = {}; for (const k in data) if (data[k] !== s[k]) patch[k] = data[k]; if (Object.keys(patch).length) patchS(id, patch); if (patch.debut || patch.emplacement || patch.duree) moved = cascade(id); }
     else createS(data);
     closeSheet(); render();
+    if (moved.length) toast(cascadeTxt(moved).trim());
     if (!!v("empl") !== !!v("debut")) toast("Il faut un emplacement et une date d'entrée pour placer la station : elle reste dans le carnet.");
   };
 }

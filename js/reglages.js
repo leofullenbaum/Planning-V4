@@ -2,6 +2,8 @@
  *
  * Les gammes se saisissent une étape par ligne, « Nom ; 11 h » ou « Nom ; 1,5 j » (7 h par jour).
  * parseGamme() transforme ce texte en { etapesMeca: [...], heuresMeca: [...] }.
+ * « Jours de présence » : pour chaque personne, ses jours de travail et ses absences
+ * (dates « AAAA-MM-JJ » ou plages « AAAA-MM-JJ au AAAA-MM-JJ », séparées par des virgules).
  */
 
 const fmtH = (h) => !(h > 0) ? "" : (h >= 14 && (h / 7) % 0.5 === 0 ? String(h / 7).replace(".", ",") + " j" : String(h).replace(".", ",") + " h");
@@ -27,14 +29,40 @@ function openSettings() {
       <label class="f">Gamme élec, dans l'ordre (étape ; durée)<textarea id="c-ee" rows="9">${esc(gammeTxt(S.cfg.etapesElec, S.cfg.heuresElec))}</textarea></label>
       <label class="f">Gamme méca, dans l'ordre (étape ; durée)<textarea id="c-em" rows="9">${esc(gammeTxt(S.cfg.etapesMeca, S.cfg.heuresMeca))}</textarea></label>
       <label class="chk" style="align-self:end;padding-bottom:8px"><input id="c-ouvres" type="checkbox"${S.cfg.ouvres ? " checked" : ""}> Jours ouvrés seulement</label>
+      ${presFields()}
       <div class="hint full">La durée standard s'applique aux nouvelles commandes et à celles sans durée propre. « Jours ouvrés » exclut les samedis et dimanches du décompte. Gamme : une étape par ligne, avec sa durée en heures ou en jours (ex. « MECA ODO 1 ; 11 h » ou « TEST ELEC ; 4 j », 7 h par jour). Les journées de chaque station se remplissent selon cet ordre, sauf si une étape est fixée sur la station ou sur le jour. Les jours fériés ne sont pas encore pris en compte.</div>
       <div class="actions full"><button class="btn primary" type="submit">Enregistrer</button><button class="btn" type="button" id="cancel">Annuler</button></div>
     </form>`);
   $("cancel").onclick = closeSheet;
   $("cfgForm").onsubmit = (e) => {
     e.preventDefault(); if (guard()) return;
-    saveCfg({ noms: S.cfg.noms.map((_, i) => $("c-n" + i).value.trim() || "Emplacement " + (i + 1)), duree: Number($("c-duree").value) || 17, ouvres: $("c-ouvres").checked,
+    const pres = readPres(); if (!pres) return;
+    saveCfg({ presence: pres, noms: S.cfg.noms.map((_, i) => $("c-n" + i).value.trim() || "Emplacement " + (i + 1)), duree: Number($("c-duree").value) || 17, ouvres: $("c-ouvres").checked,
       elecs: lines("c-elecs"), mecas: lines("c-mecas"), ...parseGamme("c-ee", "Elec"), ...parseGamme("c-em", "Meca") });
     closeSheet(); render();
   };
+}
+
+// Jours de présence : une ligne par personne (méca puis élec), jours de la semaine cochés et absences
+const presPeople = () => [...new Set([...(S.cfg.mecas || []), ...(S.cfg.elecs || [])])];
+function presFields() {
+  const ppl = presPeople(), wd = S.cfg.ouvres ? [1, 2, 3, 4, 5] : [1, 2, 3, 4, 5, 6, 0];
+  if (!ppl.length) return "";
+  return `<div class="f full pres-set"><b>Jours de présence</b>
+    <div class="hint">Cochez les jours où chaque personne travaille. Absences : dates « 2026-11-16 » ou plages « 2026-11-16 au 2026-11-20 », séparées par des virgules. Les absences d'un jour se saisissent aussi d'un clic dans la vue Semaine.</div>
+    ${ppl.map((p, i) => `<div class="pres-row" data-p="${esc(p)}"><span class="pn">${esc(p)}</span>
+      <span class="pj">${wd.map(j => `<label class="chk"><input type="checkbox" id="c-pj${i}-${j}"${joursDe(p).includes(j) ? " checked" : ""}> ${JOURS_NOMS[j]}</label>`).join("")}</span>
+      <input id="c-pa${i}" placeholder="Absences" value="${esc(absTxt(presOf(p).absences))}"></div>`).join("")}</div>`;
+}
+function readPres() {
+  const all = { ...(S.cfg.presence || {}) }, wd = S.cfg.ouvres ? [1, 2, 3, 4, 5] : [1, 2, 3, 4, 5, 6, 0], bad = [];
+  presPeople().forEach((p, i) => {
+    if (!$("c-pa" + i)) return;
+    const r = parseAbs($("c-pa" + i).value); bad.push(...r.bad.map(b => `${p} : « ${b} »`));
+    // On garde les jours de week-end déjà réglés quand ils ne sont pas affichés
+    const jours = [...wd.filter(j => $(`c-pj${i}-${j}`).checked), ...joursDe(p).filter(j => !wd.includes(j))].sort();
+    all[p] = { jours, absences: r.dates };
+  });
+  if (bad.length) { toast("Absence non comprise, à écrire AAAA-MM-JJ : " + bad.join(", ")); return null; }
+  return all;
 }

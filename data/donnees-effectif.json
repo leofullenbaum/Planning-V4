@@ -1,0 +1,359 @@
+{
+  "stations": {
+    "t01": {
+      "client": "Client Nominal",
+      "couleur": "RAL 7032",
+      "debut": "2026-11-02",
+      "duree": 17,
+      "elec": "Gaëlle",
+      "emplacement": 1,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-12-04",
+      "meca": "Bastien",
+      "note": "Cas nominal : marge confortable",
+      "numero": "V4-101"
+    },
+    "t02": {
+      "client": "Client Retard",
+      "couleur": "RAL 1015",
+      "debut": "2026-11-02",
+      "duree": 17,
+      "elec": "Hugo",
+      "emplacement": 2,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-11-20",
+      "meca": "Chloé",
+      "note": "Livraison avant la fin : retard attendu",
+      "numero": "V4-102"
+    },
+    "t03": {
+      "client": "Client Marge Juste",
+      "couleur": "RAL 7032",
+      "debut": "2026-11-02",
+      "duree": 17,
+      "elec": "Inès",
+      "emplacement": 3,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-11-26",
+      "meca": "Damien",
+      "note": "Marge faible (≤ 2 j) : alerte orange",
+      "numero": "V4-103"
+    },
+    "t04": {
+      "client": "Client Cascade",
+      "couleur": "RAL 1015",
+      "debut": "2026-11-26",
+      "duree": 17,
+      "elec": "Fabien",
+      "emplacement": 1,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2027-01-08",
+      "meca": "Antoine",
+      "note": "Suit T01 sur E1 : doit être poussée si T01 recule",
+      "numero": "V4-104"
+    },
+    "t05": {
+      "client": "Client Carnet Urgent",
+      "couleur": "RAL 7032",
+      "debut": "",
+      "duree": 17,
+      "elec": "",
+      "emplacement": "",
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-12-18",
+      "meca": "",
+      "note": "Non placée : placement auto, à traiter en premier",
+      "numero": "V4-105"
+    },
+    "t06": {
+      "client": "Client Carnet",
+      "couleur": "RAL 1015",
+      "debut": "",
+      "duree": 17,
+      "elec": "",
+      "emplacement": "",
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2027-01-29",
+      "meca": "",
+      "note": "Non placée : placement auto, en second",
+      "numero": "V4-106"
+    },
+    "t07": {
+      "client": "Client Sans Equipe",
+      "couleur": "RAL 7032",
+      "debut": "2026-11-09",
+      "duree": 17,
+      "elec": "",
+      "emplacement": 5,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-12-18",
+      "meca": "",
+      "note": "Aucune ressource affectée",
+      "numero": "V4-107"
+    },
+    "t08": {
+      "client": "Client Samedi",
+      "couleur": "RAL 7032",
+      "debut": "2026-11-28",
+      "duree": 17,
+      "elec": "Gaëlle",
+      "emplacement": 3,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2027-01-15",
+      "meca": "Bastien",
+      "note": "Début saisi un samedi : doit se caler au lundi 30/11",
+      "numero": "V4-108"
+    },
+    "t09": {
+      "client": "Client Court",
+      "couleur": "RAL 1015",
+      "debut": "2026-11-23",
+      "duree": 10,
+      "elec": "Julien",
+      "emplacement": 2,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-12-11",
+      "meca": "Émilie",
+      "note": "Durée 10 j, chevauche T02 les 23-24/11 sur E2 : conflit à signaler",
+      "numero": "V4-109"
+    },
+    "t10": {
+      "client": "Client Surcharge",
+      "couleur": "RAL 7032",
+      "debut": "2026-11-02",
+      "duree": 17,
+      "elec": "Julien",
+      "emplacement": 4,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-12-11",
+      "meca": "Émilie",
+      "note": "Cas nominal, équipe dédiée",
+      "numero": "V4-110"
+    },
+    "t11": {
+      "client": "Client Fêtes",
+      "couleur": "RAL 1015",
+      "debut": "2026-12-14",
+      "duree": 17,
+      "elec": "Hugo",
+      "emplacement": 4,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2027-01-22",
+      "meca": "Chloé",
+      "note": "Traverse 25/12 et 01/01 (fériés non gérés aujourd'hui)",
+      "numero": "V4-111"
+    },
+    "t12": {
+      "client": "Client En Cours",
+      "couleur": "RAL 7032",
+      "debut": "2026-10-12",
+      "duree": 17,
+      "elec": "Fabien",
+      "emplacement": 5,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-11-06",
+      "meca": "Antoine",
+      "note": "Démarrée : avancement visible sur l'écran atelier",
+      "numero": "V4-112",
+      "jours": {
+        "2026-10-26": {
+          "meca": "MECA ODO 2",
+          "elec": "Câblage ODO"
+        }
+      }
+    },
+    "t13": {
+      "client": "Client avec un nom très long pour tester l'affichage TV & <b>accents</b> é è à ; ç",
+      "couleur": "RAL 9010",
+      "debut": "2027-01-04",
+      "duree": 17,
+      "elec": "Fabien",
+      "emplacement": 3,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2027-02-05",
+      "meca": "Antoine",
+      "note": "Texte spécial : <script>alert(1)</script> ; « guillemets »",
+      "numero": "V4-113"
+    },
+    "t14": {
+      "client": "Client Sans Date",
+      "couleur": "RAL 7032",
+      "debut": "2026-12-14",
+      "duree": 17,
+      "elec": "Inès",
+      "emplacement": 2,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "",
+      "meca": "Damien",
+      "note": "Pas de date de livraison",
+      "numero": "V4-114"
+    }
+  },
+  "reglages": {
+    "general": {
+      "duree": 17,
+      "elecs": [
+        "Fabien",
+        "Gaëlle",
+        "Hugo",
+        "Inès",
+        "Julien"
+      ],
+      "etapesElec": [
+        "Passage câble ODO + ROXTEC",
+        "Passage de câble GAZ + ROXTEC",
+        "Passage de câble ELEC",
+        "Câblage ODO",
+        "Câblage BJ GAZ",
+        "Câblage poste Gaz",
+        "Câblage Local elec et Armoire électrique",
+        "TEST ELEC"
+      ],
+      "etapesMeca": [
+        "MECA ODO 1",
+        "MECA GAZ 1",
+        "MECA ELEC 1 Rail",
+        "MECA ELEC 2",
+        "MECA EXT",
+        "AUTOCOL",
+        "MECA ODO 2",
+        "MECA GAZ 2",
+        "MECA ELEC 3"
+      ],
+      "mecas": [
+        "Antoine",
+        "Bastien",
+        "Chloé",
+        "Damien",
+        "Émilie"
+      ],
+      "noms": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "ouvres": true,
+      "heuresMeca": [
+        11,
+        7,
+        7,
+        7,
+        7,
+        4,
+        7,
+        11,
+        7
+      ],
+      "heuresElec": [
+        7,
+        11,
+        7,
+        7,
+        7,
+        7,
+        24.5,
+        28
+      ],
+      "presence": {
+        "Chloé": {
+          "jours": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "absences": []
+        },
+        "Hugo": {
+          "jours": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "absences": [
+            "2026-11-16",
+            "2026-11-17",
+            "2026-11-18",
+            "2026-11-19",
+            "2026-11-20"
+          ]
+        },
+        "Damien": {
+          "jours": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "absences": [
+            "2026-12-21",
+            "2026-12-22",
+            "2026-12-23",
+            "2026-12-24",
+            "2026-12-28",
+            "2026-12-29",
+            "2026-12-30",
+            "2026-12-31"
+          ]
+        },
+        "Inès": {
+          "jours": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "absences": [
+            "2026-11-04"
+          ]
+        },
+        "Julien": {
+          "jours": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "absences": [
+            "2026-12-24",
+            "2026-12-28",
+            "2026-12-29",
+            "2026-12-30",
+            "2026-12-31",
+            "2027-01-01"
+          ]
+        },
+        "Fabien": {
+          "jours": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "absences": []
+        }
+      }
+    }
+  }
+}

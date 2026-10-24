@@ -6,7 +6,8 @@
  *      late  : station qui sort après sa livraison
  *      clash : deux stations sur le même emplacement en même temps
  *      nores : station sans élec ou sans méca
- *      idle  : personne sans tâche certains jours des 4 prochaines semaines
+ *      idle  : personne sans tâche certains jours des 4 prochaines semaines (jours d'absence exclus)
+ *      abs   : personne affectée à une station un jour où elle est absente ou en repos (presence.js)
  *      tight : marge de 2 jours ouvrés ou moins avant la livraison
  *  - ALERT_DEF : couleur et texte de chaque alerte (ajouter une ligne ici pour une nouvelle alerte)
  *  - openAlerts(k) : liste détaillée affichée au clic sur une alerte
@@ -45,25 +46,30 @@ function ranges(dates) {
 }
 const plage = (r) => +r.from === +r.to ? `le ${dd(r.from)}` : `du ${dd(r.from)} au ${dd(r.to)}`;
 function alerts(t0) {
-  const H = 90, to = add(t0, H), ch = chargeMap(t0, to), A = { over: [], idle: [], late: [], tight: [], nores: [], clash: [] };
+  const H = 90, to = add(t0, H), ch = chargeMap(t0, to), A = { over: [], abs: [], idle: [], late: [], tight: [], nores: [], clash: [] };
   // Surcharge : deux tâches ou plus le même jour
   for (const [p, days] of ch) {
     const byKey = {};
     for (const ds in days) if (days[ds].length > 1) { const k = days[ds].map(x => x.s.id).sort().join("|"); (byKey[k] = byKey[k] || { list: days[ds], dates: [] }).dates.push(ds); }
     for (const k in byKey) ranges(byKey[k].dates).forEach(r => A.over.push({ p, r, list: byKey[k].list }));
   }
+  // Absence : une tâche prévue un jour où la personne n'est pas là
+  for (const [p, days] of ch) {
+    const off = Object.keys(days).filter(ds => presence(p, P(ds)) !== "present");
+    if (off.length) A.abs.push({ p, rs: ranges(off), n: off.length, list: [...new Map(off.flatMap(ds => days[ds]).map(t => [t.s.id, t.s])).values()] });
+  }
   // Sans tâche : jours ouvrés des 4 prochaines semaines sans rien
   const horizon = []; for (let d = snap(t0); horizon.length < 20; d = nextWork(d)) horizon.push(iso(d));
   for (const [p, role] of staff()) {
     if (!(S.cfg.mecas || []).includes(p) && !(S.cfg.elecs || []).includes(p)) continue;
-    const days = ch.get(p) || {}, free = horizon.filter(ds => !days[ds]);
+    const days = ch.get(p) || {}, free = horizon.filter(ds => !days[ds] && presence(p, P(ds)) === "present");
     if (free.length) A.idle.push({ p, role, rs: ranges(free), n: free.length });
   }
   const pl = [...S.stations.values()].filter(placed);
   for (const s of pl) {
     const i = info(s); if (i.fin < t0) continue;
-    const m = marge(i);
-    if (i.retard) A.late.push({ s, i }); else if (m !== null && m <= 2) A.tight.push({ s, i, m });
+    const m = i.marge;
+    if (i.retard) A.late.push({ s, i }); else if (m !== null && m <= MARGE_FAIBLE) A.tight.push({ s, i, m });
     if (!s.elec || !s.meca) A.nores.push({ s, i });
   }
   for (let r = 1; r <= NB_EMPL; r++) {
@@ -74,6 +80,7 @@ function alerts(t0) {
 }
 const ALERT_DEF = [
   ["over", "bad", (n) => `${n} surcharge${n > 1 ? "s" : ""} : une personne sur 2 tâches`],
+  ["abs", "bad", (n) => `${n} personne${n > 1 ? "s" : ""} prévue${n > 1 ? "s" : ""} un jour d'absence`],
   ["late", "bad", (n) => `${n} commande${n > 1 ? "s" : ""} en retard sur la livraison`],
   ["clash", "bad", (n) => `${n} chevauchement${n > 1 ? "s" : ""} d'emplacement`],
   ["nores", "warn", (n) => `${n} station${n > 1 ? "s" : ""} sans élec ou méca`],
@@ -90,13 +97,14 @@ function openAlerts(k) {
   const A = lastAlerts || alerts(today0()), lk = (s, txt) => `<button class="lnk" data-open="${esc(s.id)}">${esc(s.numero)}</button>${txt ? " " + txt : ""}`;
   const item = {
     over: (x) => `<b>${esc(x.p)}</b> ${plage(x.r)} : ${x.list.map(e => lk(e.s, +x.r.from === +x.r.to ? `<span class="mut">(${esc(e.step)})</span>` : "")).join(" et ")}`,
+    abs: (x) => `<b>${esc(x.p)}</b> : ${x.n} jour${x.n > 1 ? "s" : ""} prévu${x.n > 1 ? "s" : ""} sans être là, ${x.rs.slice(0, 4).map(plage).join(", ")}${x.rs.length > 4 ? "…" : ""} · ${x.list.map(s => lk(s)).join(" ")}`,
     late: (x) => `${lk(x.s, esc(x.s.client || ""))} sort le ${ddy(x.i.fin)}, livraison le ${ddy(x.i.livr)} : <b class="bad">${x.i.retard} j de retard</b>`,
     tight: (x) => `${lk(x.s, esc(x.s.client || ""))} sort le ${ddy(x.i.fin)}, livraison le ${ddy(x.i.livr)} : marge ${x.m} j`,
     clash: (x) => `${esc(emplName(x.r))} : ${lk(x.a.s)} (sortie ${dd(x.a.i.fin)}) et ${lk(x.b.s)} (entrée ${dd(x.b.i.debut)})`,
     nores: (x) => `${lk(x.s)} : ${[!x.s.meca && "méca", !x.s.elec && "élec"].filter(Boolean).join(" et ")} à affecter`,
     idle: (x) => `<b>${esc(x.p)}</b> (${x.role === "elec" ? "élec" : "méca"}) : ${x.n} jour${x.n > 1 ? "s" : ""} sans tâche, ${x.rs.slice(0, 4).map(plage).join(", ")}${x.rs.length > 4 ? "…" : ""}`,
   };
-  const help = { over: "Changez la personne dans la fiche de la station, ou décalez l'une des stations.", idle: "Sur les 4 prochaines semaines. Affectez cette personne à une station, ou avancez une station.", late: "Avancez la station dans la vue 4 semaines ou réduisez sa durée.", tight: "Ces stations sortent à 2 jours ouvrés ou moins de leur livraison.", clash: "Deux stations occupent le même emplacement en même temps.", nores: "Ouvrez la fiche pour choisir la personne." };
+  const help = { abs: "Sur 90 jours. Affectez une autre personne dans la fiche de la station, ou changez la présence dans la vue Semaine ou les Réglages.", over: "Changez la personne dans la fiche de la station, ou décalez l'une des stations.", idle: "Sur les 4 prochaines semaines. Affectez cette personne à une station, ou avancez une station.", late: "Avancez la station dans la vue 4 semaines ou réduisez sa durée.", tight: "Ces stations sortent à 2 jours ouvrés ou moins de leur livraison.", clash: "Deux stations occupent le même emplacement en même temps.", nores: "Ouvrez la fiche pour choisir la personne." };
   openSheet(`<h2>${ALERT_DEF.find(d => d[0] === k)[2](A[k].length)}</h2><div class="hint">${help[k]}</div>
     <ul class="alist">${A[k].map(x => `<li>${item[k](x)}</li>`).join("")}</ul>
     <div class="actions"><button class="btn" type="button" id="cancel">Fermer</button></div>`);
@@ -104,8 +112,3 @@ function openAlerts(k) {
 }
 $("chips").addEventListener("click", (e) => { const b = e.target.closest("[data-al]"); if (b) openAlerts(b.dataset.al); });
 $("sheet").addEventListener("click", (e) => { const b = e.target.closest("[data-open]"); if (b) { closeSheet(); openEdit(b.dataset.open); } });
-
-function marge(i) {
-  if (!i.livr) return null;
-  return i.livr > i.fin ? workCount(add(i.fin, 1), i.livr) : -workCount(add(i.livr, 1), i.fin);
-}

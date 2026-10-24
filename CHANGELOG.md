@@ -2,6 +2,15 @@
 
 Les changements notables, du plus récent au plus ancien. Ajouter une ligne à chaque livraison à l'atelier.
 
+## 24/10/2026 : corrections de recette et jours de présence
+
+- Retard compté en jours ouvrés, comme la marge (V4-102 : 2 j au lieu de 4).
+- Marge affichée sur chaque barre, dans l'info-bulle, la fiche et la vue Semaine : verte, orange si 2 j ou moins, rouge si retard. Une barre à la fois en retard et en chevauchement affiche les deux.
+- Décalage en cascade : déplacer, allonger ou changer la date d'une station pousse les stations suivantes du même emplacement qui la chevaucheraient.
+- Poignée sur le bord droit des barres pour changer la durée à la souris.
+- Jours de présence de chaque personne : jours travaillés dans la semaine et absences, dans les Réglages et d'un clic dans le tableau « Présence de l'équipe » de la vue Semaine. Nouvelle alerte « personne prévue un jour d'absence », cases rouges dans la vue Semaine, mention sur l'écran atelier.
+- Nouveau jeu de données `data/donnees-effectif.json` : les 14 stations du jeu de test avec une équipe fictive de 10 personnes et des présences variées.
+
 ## 24/10/2026 : code réorganisé
 
 - `index.html` découpé : styles dans `css/` (6 fichiers), code dans `js/` (15 fichiers), chacun avec un commentaire d'en-tête.

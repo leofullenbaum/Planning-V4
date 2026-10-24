@@ -48,9 +48,12 @@ Une station n'est **placée** que si `emplacement` et `debut` sont tous les deux
 | `mecas`, `elecs` | listes de textes | Mécaniciens et électriciens | `["Léo", "David"]` |
 | `etapesMeca`, `etapesElec` | listes de textes | Gamme : étapes dans l'ordre standard | `["MECA ODO 1", "MECA GAZ 1"]` |
 | `heuresMeca`, `heuresElec` | listes de nombres | Durée en heures de chaque étape, même ordre que la gamme | `[11, 7]` |
+| `presence` | objet | Par personne : `jours` travaillés dans la semaine (0 = dimanche, 1 = lundi ... 6 = samedi) et `absences` (liste de dates). Une personne absente de cet objet travaille tous les jours ouvrés. | `{ "Chloé": { "jours": [1, 2, 3, 4], "absences": ["2026-11-16"] } }` |
 
 Prévu, pas encore géré : `feries` (liste de dates non travaillées), voir l'issue « Gérer les jours fériés, congés et fermetures ».
 
-## Jeu de test
+## Jeux de données
 
 `data/donnees-test.json` a exactement ce format. Il contient 14 stations, V4-101 à V4-114, qui couvrent chacune un scénario (retard, marge faible, surcharge, chevauchement, week-end...). La liste des scénarios et les résultats attendus sont dans le [plan de réalisation](plan-realisation.md#jeu-de-données-de-test).
+
+`data/donnees-effectif.json` reprend les mêmes 14 stations avec une équipe **fictive** de 10 personnes : mécaniciens Antoine, Bastien, Chloé, Damien, Émilie ; électriciens Fabien, Gaëlle, Hugo, Inès, Julien. Les présences sont variées pour voir les alertes : Chloé ne travaille pas le vendredi, Fabien pas le lundi, Hugo est en congés du 16 au 20/11, Inès absente le 04/11, Damien et Julien en congés fin décembre. Il se charge comme le jeu de test (copie sous le nom `data/data.json`). Les résultats attendus des cas de test du plan supposent `donnees-test.json`.

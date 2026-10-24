@@ -13,15 +13,17 @@ function stationSvg(r, cur, nx, t0) {
   const num = `<circle class="num" cx="${x + 40}" cy="${y + 40}" r="26"/><text class="numt" x="${x + 40}" y="${y + 42}">${r}</text>`;
   if (!cur) return `<g>${doors}<rect class="bay" x="${x}" y="${y}" width="${SW}" height="${SH}" rx="8"/>${num}
     <text class="lib" x="${cx}" y="${y + 190}">Libre</text>${nx ? `<text class="sm" x="${cx}" y="${y + 240}">Prochaine : ${esc(nx.s.numero)}</text><text class="sm" x="${cx}" y="${y + 268}">entrée le ${dd(nx.debut)}</text>` : ""}</g>`;
+  const wh = (p) => !p ? ["à affecter", " miss"] : presence(p, t0) === "present" ? [cut(p, 14), ""] : [cut(p, 12) + " · " + PRES_TXT[presence(p, t0)].toLowerCase(), " miss"];
+  const [eN, eC] = wh(cur.s.elec), [mN, mC] = wh(cur.s.meca);
   const k = workCount(cur.debut, t0), n = dur(cur.s), hex = hexOf(cur.s.couleur) || "#c9d3cc", s = cur.s, pw = SW - 60;
   return `<g class="${cur.retard ? "late" : ""}">${doors}<rect class="shel" x="${x}" y="${y}" width="${SW}" height="${SH}" rx="8" style="fill:${hex}"/>
     <rect class="panel" x="${x + 16}" y="${y + 78}" width="${SW - 32}" height="${SH - 94}" rx="8"/>${num}
     <text class="sn" x="${x + 80}" y="${y + 52}">${esc(cut(s.numero, 10))}</text>
     <text class="jr" x="${x + 30}" y="${y + 128}">J${k}<tspan class="jn">/${n}</tspan></text>
     <rect class="pg0" x="${x + 30}" y="${y + 144}" width="${pw}" height="12" rx="6"/><rect class="pg1" x="${x + 30}" y="${y + 144}" width="${pw * Math.min(1, k / n)}" height="12" rx="6"/>
-    <text class="lbl" x="${x + 30}" y="${y + 190}">ÉLEC</text><text class="who${s.elec ? "" : " miss"}" x="${x + 92}" y="${y + 190}">${esc(cut(s.elec || "à affecter", 14))}</text>
+    <text class="lbl" x="${x + 30}" y="${y + 190}">ÉLEC</text><text class="who${eC}" x="${x + 92}" y="${y + 190}">${esc(eN)}</text>
     ${stpSvg(stepOf(s, "elec", iso(t0)), x + 30, y + 218)}
-    <text class="lbl" x="${x + 30}" y="${y + 258}">MÉCA</text><text class="who${s.meca ? "" : " miss"}" x="${x + 92}" y="${y + 258}">${esc(cut(s.meca || "à affecter", 14))}</text>
+    <text class="lbl" x="${x + 30}" y="${y + 258}">MÉCA</text><text class="who${mC}" x="${x + 92}" y="${y + 258}">${esc(mN)}</text>
     ${stpSvg(stepOf(s, "meca", iso(t0)), x + 30, y + 286)}
     <text class="sm${cur.retard ? " miss" : ""}" x="${cx}" y="${y + 340}">Sortie ${dd(cur.fin)}${cur.retard ? ` · retard ${cur.retard} j` : ""}</text>
     <text class="sm" x="${cx}" y="${y + 368}">${esc(cut([s.client, s.couleur].filter(Boolean).join(" · "), 30))}</text></g>`;
