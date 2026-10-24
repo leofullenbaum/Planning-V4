@@ -13,7 +13,7 @@ function stationSvg(r, cur, nx, t0) {
   const num = `<circle class="num" cx="${x + 40}" cy="${y + 40}" r="26"/><text class="numt" x="${x + 40}" y="${y + 42}">${r}</text>`;
   if (!cur) return `<g>${doors}<rect class="bay" x="${x}" y="${y}" width="${SW}" height="${SH}" rx="8"/>${num}
     <text class="lib" x="${cx}" y="${y + 190}">Libre</text>${nx ? `<text class="sm" x="${cx}" y="${y + 240}">Prochaine : ${esc(nx.s.numero)}</text><text class="sm" x="${cx}" y="${y + 268}">entrée le ${dd(nx.debut)}</text>` : ""}</g>`;
-  const wh = (p) => !p ? ["à affecter", " miss"] : presence(p, t0) === "present" ? [cut(p, 14), ""] : [cut(p, 12) + " · " + PRES_TXT[presence(p, t0)].toLowerCase(), " miss"];
+  const wh = (v) => { const l = ppl(v); if (!l.length) return ["à affecter", " miss"]; const off = l.filter(p => presence(p, t0) !== "present"); return off.length ? [cut(l.join(", "), 12) + " · " + (l.length > 1 ? off.length + " absent" : PRES_TXT[presence(off[0], t0)].toLowerCase()), " miss"] : [cut(l.join(", "), 16), ""]; };
   const [eN, eC] = wh(cur.s.elec), [mN, mC] = wh(cur.s.meca);
   const k = workCount(cur.debut, t0), n = dur(cur.s), hex = hexOf(cur.s.couleur) || "#c9d3cc", s = cur.s, pw = SW - 60;
   return `<g class="${cur.retard ? "late" : ""}">${doors}<rect class="shel" x="${x}" y="${y}" width="${SW}" height="${SH}" rx="8" style="fill:${hex}"/>

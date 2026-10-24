@@ -22,7 +22,7 @@ function busyOn(s, role, d) {
 const staff = () => {
   const set = new Map();
   (S.cfg.mecas || []).forEach(n => set.set(n, "meca")); (S.cfg.elecs || []).forEach(n => set.has(n) || set.set(n, "elec"));
-  for (const s of S.stations.values()) if (placed(s)) { if (s.meca && !set.has(s.meca)) set.set(s.meca, "meca"); if (s.elec && !set.has(s.elec)) set.set(s.elec, "elec"); }
+  for (const s of S.stations.values()) if (placed(s)) for (const role of ["meca", "elec"]) ppl(s[role]).forEach(p => set.has(p) || set.set(p, role));
   return set;
 };
 // Charge : personne → jour (iso) → [{ s, role, step }]
@@ -32,8 +32,7 @@ function chargeMap(from, to) {
     const i = info(s), a = i.debut > from ? i.debut : from, b = i.fin < to ? i.fin : to;
     for (let d = new Date(a); d <= b; d = add(d, 1)) for (const role of ["meca", "elec"]) {
       const st = busyOn(s, role, d); if (!st) continue;
-      const p = s[role]; if (!map.has(p)) map.set(p, {});
-      ((map.get(p))[iso(d)] = (map.get(p))[iso(d)] || []).push({ s, role, step: st });
+      for (const p of ppl(s[role])) { if (!map.has(p)) map.set(p, {}); ((map.get(p))[iso(d)] = (map.get(p))[iso(d)] || []).push({ s, role, step: st }); }
     }
   }
   return map;

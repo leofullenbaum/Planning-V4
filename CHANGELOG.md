@@ -2,6 +2,14 @@
 
 Les changements notables, du plus récent au plus ancien. Ajouter une ligne à chaque livraison à l'atelier.
 
+## 24/10/2026 : vue Semaine plus lisible, équipe à glisser
+
+- Un seul bloc par jour et par station : les étapes du jour se suivent de gauche à droite, largeur selon les heures.
+- La colonne du jour est en couleur avec la mention « Aujourd'hui ».
+- Bandeau « Équipe » au-dessus du planning : chaque personne avec sa situation du jour (libre, station, absente). On la glisse sur une ligne Méca ou Élec pour l'affecter, d'une station à l'autre pour la déplacer, sur le bandeau ou avec × pour la retirer.
+- Jusqu'à 3 personnes par métier sur une station (cases à cocher dans la fiche). Les heures de la gamme sont divisées par le nombre de personnes ; la date de sortie ne change pas d'elle-même.
+- Refus clair si la personne n'est pas du bon métier ou s'il y a déjà 3 personnes ; avertissement si elle est déjà sur une autre station à la même période.
+
 ## 24/10/2026 : corrections de recette et jours de présence
 
 - Retard compté en jours ouvrés, comme la marge (V4-102 : 2 j au lieu de 4).

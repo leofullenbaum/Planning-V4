@@ -28,8 +28,8 @@ La clé (`t12` ci-dessus) est un identifiant technique, créé automatiquement. 
 | `duree` | nombre | Durée en jours travaillés (sinon la durée standard) | `17` |
 | `emplacement` | nombre 1 à 5, ou `""` | Emplacement ; `""` = dans le carnet | `5` |
 | `debut` | date ou `""` | Entrée dans l'atelier ; `""` = dans le carnet | `"2026-10-12"` |
-| `meca` | texte | Mécanicien affecté | `"David"` |
-| `elec` | texte | Électricien affecté | `"Nassim"` |
+| `meca` | texte | Mécaniciens affectés, 3 au maximum, séparés par une virgule. Les heures de la gamme méca sont divisées par le nombre de personnes | `"David, Léo"` |
+| `elec` | texte | Électriciens affectés, même règle que `meca` | `"Nassim"` |
 | `etapeMeca`, `etapeElec` | texte | Étape fixée pour toute la station ; `""` = suit la gamme | `""` |
 | `jours` | objet | Étape choisie pour un jour précis, par rôle | `{ "2026-10-26": { "meca": "MECA ODO 2" } }` |
 | `ordreMeca`, `ordreElec` | liste ou `""` | Ordre des étapes changé par glisser-déposer ; `""` = ordre standard | `["MECA GAZ 1", "MECA ODO 1", "..."]` |

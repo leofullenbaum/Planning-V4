@@ -5,6 +5,8 @@
  *  - esc(t)  : protège un texte avant de l'insérer dans du HTML (à utiliser sur toute donnée saisie)
  *  - sw(c)   : petit carré de couleur RAL du shelter
  *  - who(n,e): nom de la personne (ou « à affecter » en rouge) suivi de son étape
+ *  - ppl(v)  : personnes d'un champ meca / elec, en liste (le champ peut en contenir jusqu'à MAX_PPL,
+ *              séparées par des virgules : « Antoine, Bastien »)
  *
  * S (l'état en mémoire) :
  *  - S.stations : Map id → station (voir docs/donnees.md pour les champs)
@@ -25,6 +27,8 @@ const RAL = { "1001": "#c2b078", "1015": "#e6d2b5", "3020": "#c1121c", "5010": "
 const RAL_NOMS = { "1001": "beige", "1015": "ivoire clair", "3020": "rouge signalisation", "5010": "bleu gentiane", "5015": "bleu ciel", "6003": "vert olive", "6011": "vert réséda", "6014": "olive jaune", "7016": "gris anthracite", "7032": "gris silex", "7035": "gris clair", "7040": "gris fenêtre", "8017": "brun chocolat", "9001": "blanc crème", "9005": "noir foncé", "9010": "blanc pur", "9016": "blanc signalisation" };
 const hexOf = (c) => { const m = String(c || "").match(/\b(\d{4})\b/); return m && RAL[m[1]] ? RAL[m[1]] : ""; };
 const sw = (c, big) => c ? `<i class="swatch${big ? " big" : ""}${hexOf(c) ? "" : " unk"}" style="${hexOf(c) ? "background:" + hexOf(c) : ""}" title="Shelter ${esc(c)}"></i>` : "";
+const MAX_PPL = 3;
+const ppl = (v) => (Array.isArray(v) ? v : String(v || "").split(",")).map(x => String(x).trim()).filter(Boolean);
 const who = (n, e) => (n ? esc(n) : '<b class="miss">à affecter</b>') + (e ? ` <span class="stp">${esc(e)}</span>` : "");
 
 const S = { stations: new Map(), cfg: { ...DEF }, view: "4s", offset: 0, mode: "planning", ready: false };

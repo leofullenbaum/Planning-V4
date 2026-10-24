@@ -2,7 +2,8 @@
  *
  * Une gamme (méca ou élec) est une liste d'étapes avec leur durée en heures (S.cfg.etapesMeca /
  * S.cfg.heuresMeca, idem Elec). Les étapes s'enchaînent depuis l'entrée de la station, à raison
- * de H_JOUR heures par jour travaillé.
+ * de H_JOUR heures par jour travaillé. Avec plusieurs personnes du même métier sur la station,
+ * chaque étape va plus vite : sa durée est divisée par le nombre de personnes (hoursFor).
  *  - stationOrder(s, role) : ordre des étapes de la station (son ordre propre « ordreMeca » /
  *    « ordreElec » s'il a été changé par glisser-déposer, sinon l'ordre standard)
  *  - gamme(s, role) : { "AAAA-MM-JJ": "étape(s) du jour" } pour toute la station
@@ -27,6 +28,8 @@ function hoursOf(role, name) {
   const names = (role === "elec" ? S.cfg.etapesElec : S.cfg.etapesMeca) || [], hrs = (role === "elec" ? S.cfg.heuresElec : S.cfg.heuresMeca) || [];
   const i = names.indexOf(name); return i >= 0 && hrs[i] > 0 ? hrs[i] : H_JOUR;
 }
+// Durée d'une étape sur une station : divisée par le nombre de personnes du métier affectées
+const hoursFor = (s, role, name) => hoursOf(role, name) / Math.max(1, ppl(s[role]).length);
 // La personne de ce rôle travaille-t-elle sur la station ce jour-là ? Renvoie l'étape (ou "Station") sinon ""
 /* Étape d'une personne sur une station un jour donné : celle du jour si elle est saisie, sinon l'étape de la station */
 /* Gamme : les étapes types s'enchaînent selon leur durée, 7 h par jour ouvré depuis l'entrée */
@@ -35,7 +38,7 @@ const gammeCache = new Map();
 function gamme(s, role) {
   const std = role === "elec" ? S.cfg.etapesElec : S.cfg.etapesMeca, stdH = (role === "elec" ? S.cfg.heuresElec : S.cfg.heuresMeca) || [];
   if (!s.debut || !std.length || !std.some((_, i) => stdH[i] > 0)) return null;
-  const names = stationOrder(s, role), hrs = names.map(n => hoursOf(role, n));
+  const names = stationOrder(s, role), hrs = names.map(n => hoursFor(s, role, n));
   const key = s.debut + "|" + role + "|" + S.cfg.ouvres + "|" + names.join(",") + "|" + hrs.join(",");
   if (gammeCache.has(key)) return gammeCache.get(key);
   const days = []; let t = 0;

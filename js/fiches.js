@@ -19,9 +19,9 @@ function openEdit(id) {
       <label class="f">Livraison<input id="f-livraison" type="date" value="${esc(s.livraison)}"></label>
       <label class="f">Client<input id="f-client" value="${esc(s.client)}"></label>
       <label class="f">Couleur du shelter<select id="f-couleur">${["RAL 7032", "RAL 1015"].concat(s.couleur && !["RAL 7032", "RAL 1015"].includes(s.couleur) ? [s.couleur] : []).map(c => `<option value="${c}"${(s.couleur || "RAL 7032") === c ? " selected" : ""}>${c} · ${RAL_NOMS[c.slice(4)] || ""}</option>`).join("")}</select></label>
-      <label class="f">Activité élec<select id="f-elec">${people(S.cfg.elecs, s.elec)}</select></label>
+      <div class="f">Élec (3 maximum)<div class="picks" id="f-elec">${picks(S.cfg.elecs, s.elec)}</div></div>
       <label class="f">Étape élec<input id="f-etapeElec" list="lee" value="${esc(s.etapeElec)}" placeholder="Vide : suit la gamme"><datalist id="lee">${S.cfg.etapesElec.map(x => `<option value="${esc(x)}">`).join("")}</datalist></label>
-      <label class="f">Activité méca<select id="f-meca">${people(S.cfg.mecas, s.meca)}</select></label>
+      <div class="f">Méca (3 maximum)<div class="picks" id="f-meca">${picks(S.cfg.mecas, s.meca)}</div></div>
       <label class="f">Étape méca<input id="f-etapeMeca" list="lem" value="${esc(s.etapeMeca)}" placeholder="Vide : suit la gamme"><datalist id="lem">${S.cfg.etapesMeca.map(x => `<option value="${esc(x)}">`).join("")}</datalist></label>
       <label class="f">Emplacement<select id="f-empl">${opts}</select></label>
       <label class="f">Entrée atelier<input id="f-debut" type="date" value="${esc(s.debut)}"></label>
@@ -64,20 +64,24 @@ function openEdit(id) {
   };
   $("sForm").onsubmit = (e) => {
     e.preventDefault(); if (guard()) return;
-    const v = (k) => $("f-" + k).value.trim(), ok = v("empl") && v("debut");
+    const picked = (k) => [...$("f-" + k).querySelectorAll("input:checked")].map(x => x.value);
+    if (picked("meca").length > MAX_PPL || picked("elec").length > MAX_PPL) return toast(`${MAX_PPL} personnes maximum par métier sur une station.`);
+    const v = (k) => ["meca", "elec"].includes(k) ? picked(k).join(", ") : $("f-" + k).value.trim(), ok = v("empl") && v("debut");
     const data = { numero: v("numero"), client: v("client"), couleur: v("couleur"), elec: v("elec"), meca: v("meca"), etapeElec: v("etapeElec"), etapeMeca: v("etapeMeca"), livraison: v("livraison"), duree: Number(v("duree")) || S.cfg.duree,
       emplacement: ok ? Number(v("empl")) : "", debut: ok ? iso(snap(P(v("debut")))) : "", note: v("note"), avancement: v("avancement") === "" ? "" : Math.max(0, Math.min(100, Number(v("avancement")) || 0)) };
-    let moved = [];
+    let moved = []; const half = !!v("empl") !== !!v("debut");
     if (id) { const patch = {}; for (const k in data) if (data[k] !== s[k]) patch[k] = data[k]; if (Object.keys(patch).length) patchS(id, patch); if (patch.debut || patch.emplacement || patch.duree) moved = cascade(id); }
     else createS(data);
     closeSheet(); render();
     if (moved.length) toast(cascadeTxt(moved).trim());
-    if (!!v("empl") !== !!v("debut")) toast("Il faut un emplacement et une date d'entrée pour placer la station : elle reste dans le carnet.");
+    if (half) toast("Il faut un emplacement et une date d'entrée pour placer la station : elle reste dans le carnet.");
   };
 }
-function people(list, cur) {
-  const l = [...list]; if (cur && !l.includes(cur)) l.push(cur);
-  return `<option value="">— À affecter —</option>` + l.map(n => `<option${n === cur ? " selected" : ""}>${esc(n)}</option>`).join("");
+// Cases à cocher des personnes d'un métier (jusqu'à MAX_PPL sur la station)
+function picks(list, cur) {
+  const on = ppl(cur), l = [...list]; on.forEach(p => l.includes(p) || l.push(p));
+  if (!l.length) return `<span class="hint">Ajoutez des personnes dans Réglages.</span>`;
+  return l.map(n => `<label class="pick"><input type="checkbox" value="${esc(n)}"${on.includes(n) ? " checked" : ""}> ${esc(n)}</label>`).join("");
 }
 function nextNum() {
   const nums = [...S.stations.values()].map(s => parseInt(String(s.numero).replace(/\D/g, "").slice(1) || String(s.numero).replace(/\D/g, ""), 10)).filter(n => !isNaN(n));
