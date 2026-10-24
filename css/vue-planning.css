@@ -1,0 +1,45 @@
+/* Vues « 4 semaines » et « 3 mois » : échelle de dates, lignes d'emplacements, barres des stations.
+ */
+
+.board { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 12px; align-items: start; }
+.gwrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); position: relative; }
+.gt { position: relative; }
+.ghead { display: flex; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.ghead .corner { width: var(--lw); flex: none; position: sticky; left: 0; z-index: 4; background: var(--surface-2); border-right: 1px solid var(--line); }
+.gscale { position: relative; flex: none; }
+.gscale .lvl { position: relative; height: 22px; border-bottom: 1px solid var(--line); }
+.gscale .lvl:last-child { border-bottom: 0; }
+.gscale .sg { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--line); padding: 3px 5px; font-size: 11px; white-space: nowrap; overflow: hidden; color: var(--muted); font-variant-numeric: tabular-nums; }
+.gscale .sg.mo { font-weight: 600; color: var(--ink); text-transform: capitalize; font-size: 12px; }
+.gscale .sg.we { background: color-mix(in srgb, var(--muted) 10%, transparent); }
+.gscale .sg.td { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.gscale .dd { text-align: center; padding: 3px 0; }
+.grow { display: flex; border-bottom: 1px solid var(--line); }
+.grow:last-child { border-bottom: 0; }
+.glabel { width: var(--lw); flex: none; position: sticky; left: 0; z-index: 3; background: var(--surface-2); border-right: 1px solid var(--line); padding: 8px 10px; display: flex; flex-direction: column; justify-content: center; }
+.glabel b { font-family: var(--f-display); font-weight: 700; font-size: 18px; line-height: 1.05; }
+.glabel span { font-size: 11px; color: var(--muted); }
+.glane { position: relative; flex: none; height: var(--rh); }
+.glane.hover { background: var(--drop); }
+.sbar { position: absolute; top: 8px; bottom: 8px; border-radius: 6px; background: color-mix(in srgb, var(--st-run) 18%, var(--surface)); border: 1px solid color-mix(in srgb, var(--st-run) 55%, var(--line)); border-left: 4px solid var(--st-run); padding: 3px 6px; overflow: hidden; cursor: grab; touch-action: none; user-select: none; display: flex; flex-direction: column; justify-content: center; gap: 1px; z-index: 1; }
+.sbar.past { opacity: .55; border-left-color: var(--st-done); background: color-mix(in srgb, var(--st-done) 14%, var(--surface)); border-color: color-mix(in srgb, var(--st-done) 45%, var(--line)); }
+.sbar.now { border-left-color: var(--accent); background: color-mix(in srgb, var(--accent) 22%, var(--surface)); border-color: color-mix(in srgb, var(--accent) 60%, var(--line)); }
+.sbar.late, .sbar.clash { border-color: var(--st-block); box-shadow: inset 0 0 0 1px var(--st-block); }
+.sbar .bn { font-weight: 700; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sbar .bc { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sbar .bw { font-size: 10px; font-weight: 700; color: var(--st-block); text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+.sbar.dragging { opacity: .85; z-index: 20; box-shadow: 0 10px 24px rgba(0,0,0,.25); cursor: grabbing; }
+.ticks { display: flex; position: absolute; left: 0; right: 0; bottom: 2px; height: 12px; pointer-events: none; }
+.ticks i { position: absolute; font-style: normal; font-family: var(--f-mono); font-size: 9px; color: var(--muted); transform: translateX(-50%); }
+.sbar.has-ticks { justify-content: flex-start; padding-top: 4px; }
+.livr { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px dotted var(--st-block); z-index: 2; pointer-events: none; }
+.livr::before { content: ""; position: absolute; top: 0; left: -6px; border: 5px solid transparent; border-top: 7px solid var(--st-block); }
+.livr.ok { border-left-color: var(--st-done); }
+.livr.ok::before { border-top-color: var(--st-done); }
+.today-line { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); z-index: 5; pointer-events: none; }
+.gfoot { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--muted); align-items: center; }
+.sw { display: inline-block; width: 14px; height: 10px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; border: 1px solid var(--line); }
+.sbar .act { font-family: var(--f-mono); font-size: 10px; font-weight: 600; color: var(--ink); }
+.sbar .stp { font-weight: 600; color: var(--ink); }
+.glabel b { font-size: 15px; }
+.gfoot.nolg > span:not(#regle) { display: none; }

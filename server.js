@@ -37,6 +37,12 @@ http.createServer(async (req, res) => {
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-cache" });
       return fs.createReadStream(PAGE).pipe(res);
     }
+    // Feuilles de style et code de la page : seulement css/*.css et js/*.js
+    const asset = url.pathname.match(/^\/(css\/[\w.-]+\.css|js\/[\w.-]+\.js)$/);
+    if (asset && fs.existsSync(path.join(DIR, asset[1]))) {
+      res.writeHead(200, { "Content-Type": (asset[1].endsWith(".css") ? "text/css" : "text/javascript") + "; charset=utf-8", "Cache-Control": "no-cache" });
+      return fs.createReadStream(path.join(DIR, asset[1])).pipe(res);
+    }
     if (url.pathname === "/api/events") {
       res.writeHead(200, { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" });
       res.write("data: " + JSON.stringify(state) + "\n\n");

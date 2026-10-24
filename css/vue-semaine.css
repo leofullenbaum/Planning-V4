@@ -1,0 +1,55 @@
+/* Vue « Semaine » : tableau fixe des 5 emplacements, lignes méca / élec, étapes du jour.
+ */
+
+.brand .wk { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.wk { border-collapse: collapse; width: 100%; min-width: 980px; table-layout: fixed; }
+.wk th, .wk td { border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); padding: 6px; vertical-align: top; text-align: left; }
+.wk thead th { background: var(--surface-2); font-weight: 600; text-transform: capitalize; position: sticky; top: 0; z-index: 1; }
+.wk thead th span { font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+.wk th.td, .wk td.td { background: var(--accent-soft); }
+.wk .who { width: 150px; font-weight: 600; position: sticky; left: 0; background: var(--surface); z-index: 1; }
+.wk thead .who { background: var(--surface-2); z-index: 2; }
+.wk .who.miss { color: var(--st-block); }
+.wk tr.grp th { background: var(--surface); color: var(--accent); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; padding-top: 12px; }
+.wk td.clash { background: color-mix(in srgb, var(--st-block) 10%, var(--surface)); }
+.wk .none { color: var(--muted); font-size: 12px; }
+.wk .cw { display: block; color: var(--st-block); font-size: 11px; font-weight: 600; }
+.wk tr.grp th { color: var(--ink); text-transform: none; letter-spacing: 0; font-size: 14px; border-top: 2px solid var(--line); display: table-cell; }
+.wk tr.grp th > * { vertical-align: middle; }
+.wk tr.grp .gi { color: var(--muted); font-weight: 400; margin-left: 10px; font-size: 12px; }
+.wk tr.grp .bad { color: var(--st-block); }
+.a-no.sm { width: 22px; height: 22px; font-size: 12px; margin-right: 8px; border-color: var(--ink); border-width: 1.5px; }
+.wk .who .rl { display: inline-block; width: 44px; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.wk .who .miss { color: var(--st-block); }
+.wk td.off { background: repeating-linear-gradient(45deg, transparent 0 6px, var(--surface-2) 6px 12px); }
+.app.wide .board { grid-template-columns: minmax(0, 1fr); }
+.app.wide .carnet { display: none; }
+.wk.fix { min-width: 1000px; }
+.wk.fix .who { width: 170px; }
+.wk.fix tbody.em { border-top: 3px solid var(--line); }
+.wk.fix tr.grp th { padding: 7px 8px; background: var(--surface-2); border-top: 3px solid color-mix(in srgb, var(--ink) 25%, var(--line)); }
+.wk.fix tr.grp .st { display: inline-flex; align-items: center; gap: 6px; margin-right: 18px; }
+.wk.fix tr.grp .st .gi { margin-left: 4px; }
+.wk.fix tr.grp .bad { font-size: 12px; }
+.wk.fix .a-no.sm { margin-right: 10px; }
+.wk.fix .who .pn { font-weight: 600; }
+.wk.fix td { padding: 4px; }
+.wk.fix .dc { display: flex; flex-direction: column; gap: 3px; cursor: pointer; border-radius: 6px; padding: 3px; min-height: 30px; }
+.wk.fix .dc:hover { background: var(--accent-soft); }
+.wk.fix .dc + .dc { border-top: 1px dashed var(--line); margin-top: 3px; padding-top: 5px; }
+.wk.fix .dc .tag { font-size: 11px; font-weight: 700; }
+.wk.fix .dc .jj { font-family: var(--f-mono); font-size: 10px; color: var(--muted); align-self: flex-end; margin-bottom: -16px; }
+.wk.fix .si { display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-left: 4px solid var(--accent); background: var(--surface); border-radius: 5px; padding: 4px 6px; font-size: 13px; font-weight: 600; line-height: 1.2; margin-right: 28px; touch-action: none; }
+.wk.fix tr.elec .si { border-left-color: #4f6b8a; }
+.wk.fix .si .nm { flex: 1; min-width: 0; }
+.wk.fix .si .hh { font-family: var(--f-mono); font-size: 11px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+.wk.fix .si .gp { font-style: normal; color: var(--muted); cursor: grab; letter-spacing: -2px; font-weight: 700; }
+.wk.fix .si[data-j] { cursor: grab; }
+.wk.fix .si.own { color: #00735f; }
+.wk.fix .si.none { color: var(--muted); font-weight: 500; border-left-color: var(--line); }
+.wk.fix .si.src { opacity: .4; }
+.wk.fix .si.tg { outline: 2px dashed var(--accent); outline-offset: 1px; background: var(--accent-soft); }
+.wk.fix .dc .si:first-of-type { margin-right: 28px; }
+.ghost-si { position: fixed; z-index: 50; pointer-events: none; box-shadow: var(--shadow); opacity: .92; display: flex; gap: 6px; border: 1px solid var(--accent); border-left: 4px solid var(--accent); background: var(--surface); border-radius: 5px; padding: 4px 6px; font-size: 13px; font-weight: 600; }
+.ghost-si .hh { font-size: 11px; color: var(--muted); }
+.ghost-si .gp { font-style: normal; }

@@ -1,0 +1,18 @@
+/* Panneaux latéraux (fiche station, réglages, liste d'alertes) et message en bas d'écran.
+ */
+
+.overlay { position: fixed; inset: 0; background: rgba(10,15,20,.45); z-index: 40; display: flex; justify-content: flex-end; }
+.sheet { background: var(--surface); width: min(440px, 100%); height: 100%; overflow-y: auto; padding: 20px 16px calc(20px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 14px; box-shadow: -8px 0 24px rgba(0,0,0,.2); }
+.sheet h2 { font-family: var(--f-display); font-size: 24px; text-transform: uppercase; letter-spacing: .03em; margin: 0; }
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fields .full { grid-column: 1 / -1; }
+label.f { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); font-weight: 500; }
+label.f input, label.f select, label.f textarea { border: 1px solid var(--line); background: var(--bg); border-radius: 6px; padding: 8px 10px; color: var(--ink); font-size: 14px; min-width: 0; }
+label.chk { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.sheet .actions { margin-top: 4px; }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 6px; z-index: 60; font-size: 13px; max-width: calc(100% - 32px); }
+.alist { margin: 12px 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; max-height: 55vh; overflow: auto; }
+.alist li { padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); line-height: 1.45; }
+.alist .mut { color: var(--muted); }
+.alist .bad { color: var(--st-block); }
+.lnk { border: 0; background: none; padding: 0; color: var(--accent); font-weight: 700; cursor: pointer; text-decoration: underline; font: inherit; font-weight: 700; }
