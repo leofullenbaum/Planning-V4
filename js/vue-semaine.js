@@ -1,7 +1,6 @@
 /* Vue « Semaine » (vue par défaut) : les 5 emplacements toujours à la même place,
  * une ligne méca et une ligne élec, et toutes les étapes de chaque jour avec leurs heures.
  *
- *  - dayParts(s, role, jour) : étapes d'une personne ce jour-là, avec la part d'heures du jour
  *  - renderWeek(t0) : dessine le tableau ; un seul bloc par jour et par station, les étapes du jour
  *    s'y suivent de gauche à droite (largeur selon les heures) ; une case est rouge si la personne a une autre tâche
  *  - glisser une étape sur une autre de la même station change son ordre de montage
@@ -10,23 +9,14 @@
  *  - bandeau Équipe (teamBar) : glisser une personne sur une ligne Méca ou Élec l'ajoute (3 maximum
  *    par métier, champ meca / elec « A, B, C ») ; depuis une autre station elle est déplacée ;
  *    × ou dépôt sur le bandeau la retire. Plus de monde = heures de la gamme divisées (gamme.js).
+ *  - un clic sur un bloc ouvre sa fiche (personne, clôture, blocs.js) ; glisser une personne
+ *    sur un bloc la met sur ce bloc seulement
  *  - la colonne du jour est en couleur avec « Aujourd'hui »
  *  - presTable() : tableau « Présence de l'équipe » sous le planning ; un clic sur un jour
  *    ajoute ou retire une absence (presence.js). Une case est aussi rouge si la personne
  *    affectée est absente ou en repos ce jour-là.
  */
 
-// Étapes d'une personne sur une station un jour donné : [{ n, h, j }] ; null si la station n'est pas dans l'atelier ce jour-là
-function dayParts(s, role, d) {
-  const i = info(s); if (!isWork(d) || d < i.debut || d > i.fin) return null;
-  const ds = iso(d), own = s.jours && s.jours[ds] && s.jours[ds][role];
-  if (own) return [{ n: own, own: true }];
-  const fixed = role === "elec" ? s.etapeElec : s.etapeMeca; if (fixed) return [{ n: fixed, fixed: true }];
-  if (!gamme(s, role)) return [];
-  const k = workCount(i.debut, d) - 1, a = k * H_JOUR, b = a + H_JOUR, out = []; let t = 0;
-  stationOrder(s, role).forEach((n, j) => { const h = hoursFor(s, role, n), x = Math.max(t, a), y = Math.min(t + h, b); if (y > x) out.push({ n, h: y - x, j }); t += h; });
-  return out;
-}
 const fmtHr = (h) => String(Math.round(h * 10) / 10).replace(".", ",") + " h";
 const roleOf = (p) => (S.cfg.mecas || []).includes(p) ? "meca" : (S.cfg.elecs || []).includes(p) ? "elec" : "";
 const jourTxt = (d) => esc(d.toLocaleDateString("fr-FR", { weekday: "long" }));
@@ -71,7 +61,7 @@ function renderWeek(t0) {
   for (let r = 1; r <= NB_EMPL; r++) {
     const list = pl.filter(s => Number(s.emplacement) === r).map(s => ({ s, i: info(s) })).filter(x => x.i.debut <= end && x.i.fin >= days[0]).sort((a, b) => a.i.debut - b.i.debut);
     const multi = list.length > 1;
-    let head = list.map(({ s, i }) => `<span class="st">${sw(s.couleur)}<b>${esc(s.numero)}</b>${s.client ? ` ${esc(s.client)}` : ""}<span class="gi">entrée ${dd(i.debut)} · sortie ${dd(i.fin)}${i.livr ? ` · livraison ${dd(i.livr)}` : ""}</span>${i.marge !== null ? `<b class="mg${margeCls(i) ? " " + margeCls(i) : ""}">${margeTxt(i)}</b>` : ""}</span>`).join("");
+    let head = list.map(({ s, i }) => `<span class="st">${sw(s.couleur)}<b>${esc(s.numero)}</b>${s.client ? ` ${esc(s.client)}` : ""}<span class="gi">entrée ${dd(i.debut)} · sortie ${dd(i.fin)}${i.livr ? ` · livraison ${dd(i.livr)}` : ""}</span>${i.marge !== null ? `<b class="mg${margeCls(i) ? " " + margeCls(i) : ""}">${margeTxt(i)}</b>` : ""}<button class="lnk bl" type="button" data-blocs="${esc(s.id)}">Blocs · ${s.avancement === "" || s.avancement == null ? progress(s) : s.avancement} %</button></span>`).join("");
     if (!list.length) { const nx = pl.filter(s => Number(s.emplacement) === r).map(s => ({ s, i: info(s) })).filter(x => x.i.debut > end).sort((a, b) => a.i.debut - b.i.debut)[0]; head = `<span class="gi">Libre cette semaine${nx ? ` · prochaine : ${esc(nx.s.numero)} le ${dd(nx.i.debut)}` : ""}</span>`; }
     h += `<tbody class="em"><tr class="grp"><th colspan="${days.length + 1}"><span class="a-no sm">${r}</span>${head}</th></tr>`;
     for (const [role, lab] of [["meca", "Méca"], ["elec", "Élec"]]) {
@@ -81,14 +71,14 @@ function renderWeek(t0) {
         if (!here.length) { h += `<td class="${tdc(d)}off"></td>`; continue; }
         let cell = "", over = [];
         for (const x of here) {
-          for (const p of ppl(x.s[role])) {
+          for (const [p] of workOn(x.s, role, d)) {
             const tasks = (chw.get(p) || {})[ds] || [];
             if (x.parts.length && tasks.length > 1) over.push(`${esc(p)} aussi sur ${tasks.filter(t => t.s.id !== x.s.id).map(t => esc(t.s.numero)).join(", ")}`);
             if (presence(p, d) !== "present") over.push(`${esc(p)} : ${PRES_TXT[presence(p, d)].toLowerCase()} ce jour`);
           }
           const n = ppl(x.s[role]).length;
           cell += `<div class="dc" data-id="${esc(x.s.id)}" data-role="${role}" data-date="${ds}"><div class="dh">${multi ? `<span class="tag">${esc(x.s.numero)}</span>` : ""}<span class="jj">J${workCount(x.i.debut, d)}</span>${n > 1 ? `<span class="nb">×${n}</span>` : ""}${!n ? `<span class="nb miss">à affecter</span>` : ""}</div>`
-            + (x.parts.length ? `<div class="bk">${x.parts.map(q => `<div class="si${q.own ? " own" : ""}${q.own || q.fixed ? " lock" : ""}" ${q.j !== undefined ? `data-j="${q.j}"` : ""} style="flex:${q.h || H_JOUR} 1 0" title="${esc(q.n)}${q.h ? " · " + fmtHr(q.h) : ""}${q.own ? " · étape choisie pour ce jour" : q.fixed ? " · étape fixée pour la station" : " · glisser sur une autre étape pour changer l'ordre"}"><span class="nm">${esc(q.n)}</span>${q.h ? `<span class="hh">${fmtHr(q.h)}</span>` : ""}</div>`).join("")}</div>`
+            + (x.parts.length ? `<div class="bk">${x.parts.map(q => `<div class="si${q.own ? " own" : ""}${q.own || q.fixed ? " lock" : ""}${q.fait ? " done" : ""}" data-n="${esc(q.n)}" ${q.j !== undefined ? `data-j="${q.j}"` : ""} style="flex:${q.h || H_JOUR} 1 0" title="${esc(q.n)}${q.h ? " · " + fmtHr(q.h) : ""}${q.p ? " · " + esc(q.p) : ""}${q.fait ? " · clôturé" : ""} · cliquer pour affecter une personne ou clôturer${q.j !== undefined ? ", glisser pour changer l'ordre" : ""}"><span class="nm">${q.fait ? "✓ " : ""}${esc(q.n)}</span><span class="hh">${q.h ? fmtHr(q.h) : ""}${q.p ? ` · <b class="bp">${esc(q.p)}</b>` : ""}</span></div>`).join("")}</div>`
               : `<div class="bk"><div class="si none">${gamme(x.s, role) ? "Gamme terminée" : "Étape à définir"}</div></div>`) + `</div>`;
         }
         if (over.length) clashes++;
@@ -123,6 +113,8 @@ function presTable(days, chw, t0) {
 $("gt").addEventListener("click", (e) => {
   if (sdragDone) { sdragDone = false; return; }
   const x = e.target.closest(".px"); if (x) return removePerson(x.dataset.id, x.dataset.role, x.dataset.p);
+  const bl = e.target.closest("[data-blocs]"); if (bl) return openBlocs(bl.dataset.blocs);
+  const si = e.target.closest(".wk.fix .si[data-n]"); if (si) { const c = si.closest(".dc"); return openBloc(c.dataset.id, c.dataset.role, si.dataset.n); }
   const c = e.target.closest(".wk.fix .dc"); if (c) return openDay(c.dataset.id, c.dataset.role, c.dataset.date);
   const pc = e.target.closest(".wk.pres td.pc"); if (!pc || guard()) return;
   const p = pc.dataset.p, d = P(pc.dataset.date);
@@ -179,6 +171,8 @@ function removePerson(id, role, p) {
 function pTarget(e) {
   const el = document.elementFromPoint(e.clientX, e.clientY); if (!el) return null;
   if (el.closest("#team")) return { team: true, el: el.closest("#team") };
+  const si = el.closest(".wk.fix .si[data-n]");
+  if (si) { const c = si.closest(".dc"); return { id: c.dataset.id, role: c.dataset.role, n: si.dataset.n, el: si }; }
   const z = el.closest(".wk.fix .pz, .wk.fix .dc, .wk.fix .pp[data-id]");
   if (z) return { id: z.dataset.id, role: z.dataset.role, el: z.matches(".pp") ? z.closest(".who") : z };
   const who = el.closest(".wk.fix tr.rw .who");
@@ -189,6 +183,7 @@ function dropPerson(g, t) {
   const p = g.p, s = S.stations.get(t.id); if (!s) return;
   const want = roleOf(p);
   if (want && want !== t.role) return toast(`${p} est ${want === "elec" ? "élec" : "méca"} : glissez cette personne sur une ligne ${want === "elec" ? "Élec" : "Méca"}.`);
+  if (t.n) { if (guard()) return; setBloc(s.id, t.role, t.n, { p }); render(); return toast(`${s.numero} : ${p} fait le bloc « ${t.n} ».`); }
   if (g.fromId === t.id && g.fromRole === t.role) return;
   const cur = ppl(s[t.role]);
   if (cur.includes(p)) return toast(`${p} est déjà sur ${s.numero}.`);

@@ -101,3 +101,20 @@
 .wk.pres td.clash { box-shadow: inset 0 0 0 2px var(--st-block); }
 .wk.pres .tag { font-size: 11px; font-weight: 700; }
 .wk.pres .who .pn { font-weight: 600; }
+/* Blocs : personne et clôture */
+.wk.fix .si.done { background: color-mix(in srgb, #2f7d4f 12%, var(--surface)); border-top-color: #2f7d4f; color: #2f7d4f; }
+.wk.fix .si .bp { font-weight: 700; color: var(--ink); }
+.wk.fix tr.grp .bl { font-size: 12px; margin-left: 10px; }
+.avc { display: flex; align-items: center; gap: 10px; }
+.avc .pgb { flex: 1; height: 10px; border-radius: 5px; background: var(--surface-2); overflow: hidden; }
+.avc .pgb i { display: block; height: 100%; background: #2f7d4f; }
+.sheet .nb { border: 1px solid var(--line); border-radius: 8px; padding: 10px; background: var(--surface-2); }
+.blist { width: 100%; border-collapse: collapse; font-size: 13px; }
+.blist th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding: 4px; border-bottom: 1px solid var(--line); }
+.blist td { padding: 5px 4px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.blist td:first-child { width: 24px; }
+.blist td small { display: block; color: var(--muted); font-size: 11px; }
+.blist select { width: 100%; max-width: 170px; font-size: 12px; }
+.blist tr.done td:nth-child(2) b { color: #2f7d4f; text-decoration: line-through; }
+.hint .ok { color: #2f7d4f; }
+.sheet .nb select { width: 100%; }

@@ -1,6 +1,6 @@
 /* Écran atelier (adresse /#atelier, pour la TV) : les 5 emplacements vus de dessus,
  * placés comme dans l'atelier (1-2-3 en bas, 5 et 4 en haut ; positions dans POS).
- * Chaque station montre son jour (J5/17), sa barre d'avancement, l'élec et le méca avec
+ * Chaque station montre son jour (J5/17), sa barre d'avancement (blocs clôturés, sinon selon la date), l'élec et le méca avec
  * l'étape du jour, sa sortie et un éventuel retard. L'écran se redessine toutes les 15 s.
  */
 
@@ -20,7 +20,7 @@ function stationSvg(r, cur, nx, t0) {
     <rect class="panel" x="${x + 16}" y="${y + 78}" width="${SW - 32}" height="${SH - 94}" rx="8"/>${num}
     <text class="sn" x="${x + 80}" y="${y + 52}">${esc(cut(s.numero, 10))}</text>
     <text class="jr" x="${x + 30}" y="${y + 128}">J${k}<tspan class="jn">/${n}</tspan></text>
-    <rect class="pg0" x="${x + 30}" y="${y + 144}" width="${pw}" height="12" rx="6"/><rect class="pg1" x="${x + 30}" y="${y + 144}" width="${pw * Math.min(1, k / n)}" height="12" rx="6"/>
+    <rect class="pg0" x="${x + 30}" y="${y + 144}" width="${pw}" height="12" rx="6"/><rect class="pg1" x="${x + 30}" y="${y + 144}" width="${pw * Math.min(1, s.avancement === "" || s.avancement == null ? k / n : s.avancement / 100)}" height="12" rx="6"/>
     <text class="lbl" x="${x + 30}" y="${y + 190}">ÉLEC</text><text class="who${eC}" x="${x + 92}" y="${y + 190}">${esc(eN)}</text>
     ${stpSvg(stepOf(s, "elec", iso(t0)), x + 30, y + 218)}
     <text class="lbl" x="${x + 30}" y="${y + 258}">MÉCA</text><text class="who${mC}" x="${x + 92}" y="${y + 258}">${esc(mN)}</text>

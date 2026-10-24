@@ -33,7 +33,8 @@ La clé (`t12` ci-dessus) est un identifiant technique, créé automatiquement. 
 | `etapeMeca`, `etapeElec` | texte | Étape fixée pour toute la station ; `""` = suit la gamme | `""` |
 | `jours` | objet | Étape choisie pour un jour précis, par rôle | `{ "2026-10-26": { "meca": "MECA ODO 2" } }` |
 | `ordreMeca`, `ordreElec` | liste ou `""` | Ordre des étapes changé par glisser-déposer ; `""` = ordre standard | `["MECA GAZ 1", "MECA ODO 1", "..."]` |
-| `avancement` | nombre 0 à 100, ou `""` | Avancement saisi ; `""` = calculé selon la date | `""` |
+| `avancement` | nombre 0 à 100, ou `""` | Avancement ; recalculé à chaque clôture de bloc (heures clôturées / heures de la gamme), ou saisi dans la fiche ; `""` = selon la date | `35` |
+| `blocsMeca`, `blocsElec` | objet | Par étape de la gamme : personne qui fait le bloc (`p`, heures pleines) et clôture (`fait`) | `{ "MECA ODO 1": { "p": "Antoine", "fait": true } }` |
 | `note` | texte | Consigne pour l'atelier | `"Démarrée"` |
 
 Une station n'est **placée** que si `emplacement` et `debut` sont tous les deux remplis. Sinon elle est dans le carnet de commandes.

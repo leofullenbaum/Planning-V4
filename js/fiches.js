@@ -26,7 +26,7 @@ function openEdit(id) {
       <label class="f">Emplacement<select id="f-empl">${opts}</select></label>
       <label class="f">Entrée atelier<input id="f-debut" type="date" value="${esc(s.debut)}"></label>
       <label class="f">Durée (jours)<input id="f-duree" type="number" min="1" step="1" value="${esc(dur(s))}"></label>
-      <label class="f">Avancement (%)<input id="f-avancement" type="number" min="0" max="100" step="5" value="${esc(s.avancement ?? "")}" placeholder="Auto, selon la date"></label>
+      <label class="f">Avancement (%)<input id="f-avancement" type="number" min="0" max="100" step="5" value="${esc(s.avancement ?? "")}" placeholder="Auto : blocs clôturés"></label>
       <div class="f" style="justify-content:end"><button class="btn" type="button" id="fit">Premier créneau libre</button></div>
       <div class="hint full" id="calc"></div>
       <label class="f full">Consigne pour l'atelier<textarea id="f-note" rows="2">${esc(s.note)}</textarea></label>
@@ -34,6 +34,7 @@ function openEdit(id) {
         <button class="btn primary" type="submit">${id ? "Enregistrer" : "Ajouter au carnet"}</button>
         ${id && placed(s) ? '<button class="btn" type="button" id="unplan">Remettre au carnet</button>' : ""}
         <button class="btn" type="button" id="cancel">Annuler</button>
+        ${id && s.debut ? '<button class="btn" type="button" id="blocs">Blocs et avancement</button>' : ""}
         ${id ? '<button class="btn danger" type="button" id="del" style="margin-left:auto">Supprimer</button>' : ""}
       </div>
     </form>`);
@@ -57,6 +58,7 @@ function openEdit(id) {
   };
   $("cancel").onclick = closeSheet;
   if ($("unplan")) $("unplan").onclick = () => { if (guard()) return; patchS(id, { emplacement: "", debut: "" }); closeSheet(); render(); };
+  if ($("blocs")) $("blocs").onclick = () => openBlocs(id);
   if ($("del")) $("del").onclick = (e) => {
     if (guard()) return;
     if (!e.target.classList.contains("armed")) { e.target.classList.add("armed"); e.target.textContent = "Confirmer la suppression"; return; }
