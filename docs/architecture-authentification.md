@@ -3,6 +3,8 @@
 24/10/2026 · Léo
 
 > Document de réflexion. Rien n'est encore codé : il propose trois options, une recommandation et la liste des questions à trancher avant de lancer le développement.
+>
+> **Décision du 24/10/2026 (Léo) : option A retenue.** L'application reste accessible uniquement depuis le réseau de l'entreprise. Les options B et C sont gardées ci-dessous pour mémoire.
 
 ## Le besoin
 
@@ -40,7 +42,7 @@ Le droit est vérifié **par le serveur** à chaque requête : masquer un bouton
 
 ## Trois options d'architecture
 
-### Option A · Serveur local actuel + comptes intégrés (recommandée pour démarrer)
+### Option A · Serveur local actuel + comptes intégrés (retenue)
 
 On garde le PC de l'atelier, `server.js` et `data.json`, et on ajoute :
 
@@ -59,7 +61,7 @@ On garde le PC de l'atelier, `server.js` et `data.json`, et on ajoute :
 
 **Coût** : 0 €. **Effort** : environ 1 à 1,5 semaine de développement et de tests.
 
-### Option B · Option A + accès sécurisé depuis l'extérieur
+### Option B · Option A + accès sécurisé depuis l'extérieur (non retenue)
 
 Même serveur que l'option A, mais rendu joignable depuis l'extérieur (téléphone en 4G, domicile du responsable) par un **tunnel** plutôt qu'en ouvrant un port sur la box :
 
@@ -74,7 +76,7 @@ Même serveur que l'option A, mais rendu joignable depuis l'extérieur (téléph
 
 **Coût** : 0 à 10 €/an. **Effort** : option A + environ 1 jour de mise en place.
 
-### Option C · Application hébergée dans le cloud
+### Option C · Application hébergée dans le cloud (non retenue)
 
 On sort l'application du PC : base de données et authentification gérées (par exemple **Supabase** : base PostgreSQL, comptes, temps réel), page hébergée sur un service web.
 
@@ -98,9 +100,9 @@ On sort l'application du PC : base de données et authentification gérées (par
 | PC serveur à maintenir | Oui | Oui | Non |
 | Réécriture de l'existant | Faible | Faible | Importante |
 
-## Recommandation
+## Recommandation et décision
 
-**Commencer par l'option A**, en la construisant pour pouvoir ajouter l'option B ensuite si le responsable a besoin d'accéder au planning hors de l'entreprise. C'est la plus rapide, elle ne coûte rien, elle garde l'atelier indépendant d'internet et elle ne remet pas en cause le travail déjà fait. L'option C ne se justifie que si on ne veut plus de PC serveur ou si l'outil doit servir à plusieurs sites.
+**Option A retenue** : l'accès hors de l'entreprise n'est pas nécessaire. Elle reste construite pour pouvoir ajouter l'option B plus tard si le besoin apparaît. C'est la plus rapide, elle ne coûte rien, elle garde l'atelier indépendant d'internet et elle ne remet pas en cause le travail déjà fait. L'option C ne se justifie que si on ne veut plus de PC serveur ou si l'outil doit servir à plusieurs sites.
 
 L'authentification peut s'insérer dans le plan de réalisation entre la phase 2 (ressources et calendrier) et la phase 3 (affichage atelier), puisque la TV aura besoin de son jeton d'écran au moment de son installation.
 
@@ -127,11 +129,11 @@ Pour 2 à 5 personnes, cela suffit largement ; pas besoin de verrouillage ni d'�
 
 ## Questions à trancher
 
-1. **Accès depuis l'extérieur** : le responsable ou le chef d'équipe doivent-ils consulter ou modifier le planning hors de l'entreprise (téléphone, domicile) ? Si oui, option B ; sinon, option A suffit.
+1. ~~**Accès depuis l'extérieur**~~ : tranché le 24/10/2026, accès uniquement dans l'entreprise, option A.
 2. **Nombre d'utilisateurs** : une seule personne par rôle, ou plusieurs chefs d'équipe ?
 3. **Comptes nominatifs ou partagés** : un compte par personne (recommandé, pour savoir qui a modifié quoi) ou un compte par rôle ?
 4. **Validation** : le chef d'équipe modifie-t-il directement le planning, ou propose-t-il des changements que le responsable valide ? La validation est possible mais ajoute environ une semaine de travail.
 5. **Droits du chef d'équipe** : peut-il supprimer une station ou importer le carnet de commandes ?
 6. **Écran atelier** : confirmer qu'il s'affiche sans connexion, avec un jeton d'écran révocable.
-7. **Le PC serveur** : est-il dédié, allumé en permanence, avec une IP fixe ? Le service informatique accepte-t-il un tunnel (option B) ou un hébergement externe (option C) ?
+7. **Le PC serveur** : est-il dédié, allumé en permanence, avec une IP fixe ?
 8. **Historique** : combien de temps garder le journal des modifications (par exemple 12 mois) ?
