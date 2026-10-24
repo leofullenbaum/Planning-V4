@@ -1,0 +1,282 @@
+{
+  "stations": {
+    "ex24": {
+      "client": "Client exemple G",
+      "couleur": "RAL 7032",
+      "debut": "2026-10-06",
+      "duree": 17,
+      "elec": "Élec A",
+      "emplacement": 2,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-12-01",
+      "meca": "Méca B",
+      "note": "",
+      "numero": "V4-024"
+    },
+    "ex26": {
+      "client": "Client exemple H",
+      "couleur": "RAL 7032",
+      "debut": "2026-10-06",
+      "duree": 17,
+      "elec": "Élec C",
+      "emplacement": 4,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "jours": {
+        "2026-10-12": {
+          "meca": "MECA ODO 2"
+        }
+      },
+      "livraison": "2026-11-02",
+      "meca": "Méca A",
+      "note": "",
+      "numero": "V4-026"
+    },
+    "ex36": {
+      "client": "Client exemple P",
+      "couleur": "RAL 7032",
+      "debut": "2026-11-27",
+      "duree": 17,
+      "elec": "",
+      "emplacement": 5,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2027-01-08",
+      "meca": "Méca A",
+      "note": "",
+      "numero": "V4-036"
+    },
+    "ex30": {
+      "client": "Client exemple J",
+      "couleur": "RAL 1015",
+      "debut": "2026-11-04",
+      "duree": 17,
+      "elec": "Élec C",
+      "emplacement": 5,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-12-15",
+      "meca": "Méca C",
+      "note": "",
+      "numero": "V4-030"
+    },
+    "ex27": {
+      "client": "Client exemple D",
+      "couleur": "RAL 7032",
+      "debut": "2026-12-22",
+      "duree": 17,
+      "elec": "Kylian",
+      "emplacement": 1,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-11-13",
+      "meca": "Léo",
+      "note": "",
+      "numero": "V4-027"
+    },
+    "ex29": {
+      "client": "Client exemple E",
+      "couleur": "RAL 7032",
+      "debut": "2026-11-23",
+      "duree": 17,
+      "elec": "Élec B",
+      "emplacement": 2,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-11-20",
+      "meca": "",
+      "note": "",
+      "numero": "V4-029"
+    },
+    "ex28": {
+      "client": "Client exemple I",
+      "couleur": "RAL 1015",
+      "debut": "2026-10-29",
+      "duree": 17,
+      "elec": "Élec A",
+      "emplacement": 4,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-12-08",
+      "meca": "Méca B",
+      "note": "",
+      "numero": "V4-028"
+    },
+    "ex25": {
+      "client": "Client exemple C",
+      "couleur": "RAL 1015",
+      "debut": "2026-10-07",
+      "duree": 17,
+      "elec": "Nassim",
+      "emplacement": 3,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-10-23",
+      "meca": "David",
+      "note": "",
+      "numero": "V4-025"
+    },
+    "ex22": {
+      "client": "Client exemple F",
+      "couleur": "RAL 7032",
+      "debut": "2026-11-27",
+      "duree": 17,
+      "elec": "Élec B",
+      "emplacement": 1,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-11-24",
+      "meca": "Méca C",
+      "note": "",
+      "numero": "V4-022"
+    },
+    "ex33": {
+      "client": "Client exemple M",
+      "couleur": "RAL 1015",
+      "debut": "2026-10-29",
+      "duree": 17,
+      "elec": "Élec A",
+      "emplacement": 2,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-12-11",
+      "meca": "Méca A",
+      "note": "",
+      "numero": "V4-033"
+    },
+    "ex31": {
+      "client": "Client exemple K",
+      "couleur": "RAL 1015",
+      "debut": "2026-10-30",
+      "duree": 17,
+      "elec": "",
+      "emplacement": 3,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-11-26",
+      "meca": "",
+      "note": "",
+      "numero": "V4-031"
+    },
+    "ex34": {
+      "client": "Client exemple N",
+      "couleur": "RAL 7032",
+      "debut": "2026-11-23",
+      "duree": 17,
+      "elec": "Élec B",
+      "emplacement": 4,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-12-17",
+      "meca": "Méca B",
+      "note": "",
+      "numero": "V4-034"
+    },
+    "ex32": {
+      "client": "Client exemple L",
+      "couleur": "RAL 7032",
+      "debut": "2026-11-04",
+      "duree": 17,
+      "elec": "",
+      "emplacement": 1,
+      "livraison": "2026-12-03",
+      "meca": "",
+      "note": "",
+      "numero": "V4-032",
+      "etapeElec": "",
+      "etapeMeca": ""
+    },
+    "ex23": {
+      "client": "Client exemple B",
+      "couleur": "RAL 1015",
+      "debut": "2026-10-08",
+      "duree": 17,
+      "elec": "Élec C",
+      "emplacement": 5,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-11-06",
+      "meca": "Méca A",
+      "note": "",
+      "numero": "V4-023"
+    },
+    "ex35": {
+      "client": "Client exemple O",
+      "couleur": "RAL 1015",
+      "debut": "2026-11-24",
+      "duree": 17,
+      "elec": "Élec C",
+      "emplacement": 3,
+      "etapeElec": "",
+      "etapeMeca": "",
+      "livraison": "2026-12-26",
+      "meca": "Méca C",
+      "note": "",
+      "numero": "V4-035"
+    }
+  },
+  "reglages": {
+    "general": {
+      "duree": 18,
+      "elecs": [
+        "Kylian",
+        "Nassim"
+      ],
+      "etapesElec": [
+        "Passage câble ODO + ROXTEC",
+        "Passage de câble GAZ + ROXTEC",
+        "Passage de câble ELEC",
+        "Câblage ODO",
+        "Câblage BJ GAZ",
+        "Câblage poste Gaz",
+        "Câblage Local elec et Armoire électrique",
+        "TEST ELEC"
+      ],
+      "etapesMeca": [
+        "MECA ODO 1",
+        "MECA GAZ 1",
+        "MECA ELEC 1 Rail",
+        "MECA ELEC 2",
+        "MECA EXT",
+        "AUTOCOL",
+        "MECA ODO 2",
+        "MECA GAZ 2",
+        "MECA ELEC 3"
+      ],
+      "mecas": [
+        "Léo",
+        "David"
+      ],
+      "noms": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "ouvres": true,
+      "heuresMeca": [
+        11,
+        7,
+        7,
+        7,
+        7,
+        4,
+        7,
+        11,
+        7
+      ],
+      "heuresElec": [
+        7,
+        11,
+        7,
+        7,
+        7,
+        7,
+        24.5,
+        28
+      ]
+    }
+  }
+}
